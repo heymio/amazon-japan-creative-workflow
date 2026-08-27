@@ -36,6 +36,8 @@ RELEASE_DOCS = [
     "docs/provenance.md",
     "docs/simulator-integration.md",
     "docs/evidence-hardening.md",
+    "docs/release.md",
+    "docs/release-notes-v0.1.0.md",
 ]
 ROOT_METADATA = ["README.md", "VERSION", "LICENSE"]
 FORBIDDEN_PRIVATE_MARKERS = (b"/Users/", b"github_pat_", b"ghp_", b"AKIA")

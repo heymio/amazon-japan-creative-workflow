@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate built M5 release artifacts without publishing them."""
+"""Independently validate built M5.1 Plugin/Codex release artifacts."""
 
 from __future__ import annotations
 
@@ -16,9 +16,10 @@ FORBIDDEN_PRIVATE_MARKERS = (b"/Users/", b"github_pat_", b"ghp_", b"AKIA")
 LEGACY_PREFIXES = (
     ".agents/skills/japan-listing-demo/",
     ".agents/skills/listing-hardening/",
-    "amazon-japan-creative-workflow/internal-skills/japan-listing-demo/",
-    "amazon-japan-creative-workflow/internal-skills/listing-hardening/",
+    "amazon-japan-creative-workflow/skills/japan-listing-demo/",
+    "amazon-japan-creative-workflow/skills/listing-hardening/",
 )
+BROKEN_CURRENT_SHIM = "validate_project_state.py"
 
 
 def _sha256(path: Path) -> str:
@@ -39,12 +40,34 @@ def _manifest_path(root: Path) -> Path | None:
     return matches[0] if len(matches) == 1 else None
 
 
+def _validate_plugin_manifest(archive: ZipFile, names: set[str], manifest: dict, errors: list[str]) -> None:
+    path = "amazon-japan-creative-workflow/.codex-plugin/plugin.json"
+    if path not in names:
+        errors.append("plugin_bundle: .codex-plugin/plugin.json missing")
+        return
+    try:
+        plugin = json.loads(archive.read(path).decode("utf-8"))
+    except (UnicodeError, json.JSONDecodeError) as exc:
+        errors.append(f"plugin_bundle: invalid plugin.json: {exc}")
+        return
+    if not isinstance(plugin, dict):
+        errors.append("plugin_bundle: plugin.json root must be an object")
+        return
+    if plugin.get("name") != manifest.get("distribution"):
+        errors.append("plugin_bundle: plugin name mismatch")
+    if plugin.get("version") != manifest.get("version"):
+        errors.append("plugin_bundle: plugin version mismatch")
+    if plugin.get("skills") != "./skills/":
+        errors.append("plugin_bundle: plugin skills path must be ./skills/")
+
+
 def _validate_zip(path: Path, artifact_type: str, manifest: dict, errors: list[str]) -> None:
     try:
         with ZipFile(path) as archive:
             infos = archive.infolist()
-            names = [info.filename for info in infos]
-            if len(names) != len(set(names)):
+            names_list = [info.filename for info in infos]
+            names = set(names_list)
+            if len(names_list) != len(names):
                 errors.append(f"{path.name}: duplicate ZIP members")
             for info in infos:
                 name = info.filename
@@ -56,43 +79,32 @@ def _validate_zip(path: Path, artifact_type: str, manifest: dict, errors: list[s
                     errors.append(f"{path.name}: symlink member is forbidden: {name}")
                 if "selftest_" in name or "__pycache__" in name or name.endswith(".pyc"):
                     errors.append(f"{path.name}: repository-only test/cache leaked: {name}")
+                if "/internal-skills/" in name or name.startswith("internal-skills/"):
+                    errors.append(f"{path.name}: unsupported internal-skills discovery layout leaked: {name}")
+                if name.endswith("/scripts/validate_project_state.py") or name == ".agents/skills/amazon-japan-creative-workflow/scripts/validate_project_state.py":
+                    errors.append(f"{path.name}: broken legacy shim leaked: {name}")
                 if any(name.startswith(prefix) for prefix in LEGACY_PREFIXES):
                     errors.append(f"{path.name}: legacy-only Skill leaked into current release: {name}")
                 data = archive.read(name)
                 if any(marker in data for marker in FORBIDDEN_PRIVATE_MARKERS):
                     errors.append(f"{path.name}: private/sensitive marker in {name}")
 
-            build_info_name = (
-                "amazon-japan-creative-workflow/BUILD_INFO.json"
-                if artifact_type == "one_install_skill"
-                else "BUILD_INFO.json"
-            )
-            if build_info_name not in names:
-                errors.append(f"{path.name}: BUILD_INFO.json missing")
-            else:
-                try:
-                    build_info = json.loads(archive.read(build_info_name).decode("utf-8"))
-                except (UnicodeError, json.JSONDecodeError) as exc:
-                    errors.append(f"{path.name}: invalid BUILD_INFO.json: {exc}")
-                else:
-                    for field in ["version", "source_commit", "artifact_type", "distribution"]:
-                        expected = manifest.get(field) if field in {"version", "source_commit", "distribution"} else artifact_type
-                        if build_info.get(field) != expected:
-                            errors.append(f"{path.name}: BUILD_INFO {field} mismatch")
-
-            if artifact_type == "one_install_skill":
+            if artifact_type == "plugin_bundle":
+                build_info_name = "amazon-japan-creative-workflow/BUILD_INFO.json"
                 required = {
-                    "amazon-japan-creative-workflow/SKILL.md",
-                    "amazon-japan-creative-workflow/core/manifest.yaml",
+                    "amazon-japan-creative-workflow/.codex-plugin/plugin.json",
+                    "amazon-japan-creative-workflow/skills/amazon-japan-creative-workflow/SKILL.md",
                     "amazon-japan-creative-workflow/runtime-scripts/package_common.py",
+                    "amazon-japan-creative-workflow/contracts/final-eligibility.schema.json",
+                    "amazon-japan-creative-workflow/profiles/amazon-jp/slot-taxonomy.json",
                 }
                 for skill in manifest.get("runtime_skills", []):
-                    if skill == "amazon-japan-creative-workflow":
-                        continue
-                    required.add(f"amazon-japan-creative-workflow/internal-skills/{skill}/SKILL.md")
+                    required.add(f"amazon-japan-creative-workflow/skills/{skill}/SKILL.md")
                 for skill in manifest.get("support_skills", []):
-                    required.add(f"amazon-japan-creative-workflow/internal-skills/{skill}/SKILL.md")
+                    required.add(f"amazon-japan-creative-workflow/skills/{skill}/SKILL.md")
+                _validate_plugin_manifest(archive, names, manifest, errors)
             elif artifact_type == "codex_bundle":
+                build_info_name = "BUILD_INFO.json"
                 required = {
                     "BUILD_INFO.json",
                     "README.md",
@@ -106,11 +118,25 @@ def _validate_zip(path: Path, artifact_type: str, manifest: dict, errors: list[s
                     required.add(f".agents/skills/{skill}/SKILL.md")
             else:
                 errors.append(f"unknown artifact type: {artifact_type}")
+                build_info_name = "BUILD_INFO.json"
                 required = set()
 
-            missing = sorted(required - set(names))
+            missing = sorted(required - names)
             if missing:
                 errors.append(f"{path.name}: missing required members: {', '.join(missing)}")
+
+            if build_info_name not in names:
+                errors.append(f"{path.name}: BUILD_INFO.json missing")
+            else:
+                try:
+                    build_info = json.loads(archive.read(build_info_name).decode("utf-8"))
+                except (UnicodeError, json.JSONDecodeError) as exc:
+                    errors.append(f"{path.name}: invalid BUILD_INFO.json: {exc}")
+                else:
+                    for field in ["version", "source_commit", "artifact_type", "distribution"]:
+                        expected = manifest.get(field) if field in {"version", "source_commit", "distribution"} else artifact_type
+                        if build_info.get(field) != expected:
+                            errors.append(f"{path.name}: BUILD_INFO {field} mismatch")
     except (OSError, BadZipFile) as exc:
         errors.append(f"{path.name}: invalid ZIP: {exc}")
 
@@ -145,8 +171,8 @@ def validate_release_dir(root: Path) -> list[str]:
         errors.append("release manifest normal_invocation mismatch")
 
     artifacts = manifest.get("artifacts")
-    if not isinstance(artifacts, dict) or set(artifacts) != {"one_install_skill", "codex_bundle"}:
-        errors.append("release manifest artifacts must contain one_install_skill and codex_bundle")
+    if not isinstance(artifacts, dict) or set(artifacts) != {"plugin_bundle", "codex_bundle"}:
+        errors.append("release manifest artifacts must contain plugin_bundle and codex_bundle")
         artifacts = {}
 
     expected_checksum_lines: list[str] = []
@@ -160,19 +186,19 @@ def validate_release_dir(root: Path) -> list[str]:
         if not isinstance(filename, str) or not filename:
             errors.append(f"{artifact_type}: filename missing")
             continue
-        path = root / filename
-        if not path.is_file():
+        artifact_path = root / filename
+        if not artifact_path.is_file():
             errors.append(f"{artifact_type}: artifact missing: {filename}")
             continue
-        actual_sha = _sha256(path)
+        actual_sha = _sha256(artifact_path)
         if not isinstance(expected_sha, str) or not HEX64.fullmatch(expected_sha):
             errors.append(f"{artifact_type}: sha256 invalid")
         elif actual_sha != expected_sha:
             errors.append(f"{artifact_type}: sha256 mismatch")
-        if not isinstance(expected_bytes, int) or isinstance(expected_bytes, bool) or path.stat().st_size != expected_bytes:
+        if not isinstance(expected_bytes, int) or isinstance(expected_bytes, bool) or artifact_path.stat().st_size != expected_bytes:
             errors.append(f"{artifact_type}: byte size mismatch")
         expected_checksum_lines.append(f"{expected_sha}  {filename}")
-        _validate_zip(path, artifact_type, manifest, errors)
+        _validate_zip(artifact_path, artifact_type, manifest, errors)
 
     expected_checksum_lines.append(f"{_sha256(manifest_path)}  {manifest_path.name}")
     checksum_path = root / "SHA256SUMS"
@@ -182,7 +208,6 @@ def validate_release_dir(root: Path) -> list[str]:
         actual_lines = checksum_path.read_text(encoding="utf-8").strip().splitlines()
         if actual_lines != sorted(expected_checksum_lines):
             errors.append("SHA256SUMS content mismatch")
-
     return errors
 
 

@@ -15,7 +15,7 @@ Planning QA asks whether the project has enough evidence and architecture to han
 9. `CONTENT_COVERAGE` and `MODULE_FIT_GATE` are both evaluated.
 10. Module count respects verified channel limits.
 11. Interaction/content packing is decided before Production.
-12. Stage 7 defines the **Complete Demo-Required Production Set** for Gallery, enhanced-content, and any other required page/demo regions.
+12. Stage 7 defines the **Complete Asset Set** for Gallery, A+, Brand Story / brand-content, video, and any other required brand-controlled regions.
 13. Every current final Asset ID has exactly one `evidence_mode`: `SOURCE_FAITHFUL`, `CREATIVE_MOCK`, or `PROOF_VISUAL`.
 14. The Production Handoff contains a concise Page Visual System covering every current final Asset ID.
 15. Adjacent assets do not accidentally repeat the same scene/composition/tone/product-scale/proof-form signature unless intentional repetition is documented.

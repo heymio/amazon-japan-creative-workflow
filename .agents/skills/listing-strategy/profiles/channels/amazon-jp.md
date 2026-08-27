@@ -103,7 +103,7 @@ For every selected enhanced-content module record:
 - mobile behavior;
 - supporting frontend/capability evidence.
 
-If an interactive carousel, hotspot, video, comparison or other module is selected, design its interaction logic and content packing before Production. Do not leave interaction invention to Demo Assembly.
+If an interactive carousel, hotspot, video, comparison or other module is selected, design its interaction logic and content packing before Production. Do not leave interaction invention to later production or simulator review.
 
 ## Gallery and enhanced-content role separation
 
@@ -123,4 +123,10 @@ Record:
 - Basic/Premium module budget used;
 - `CONTENT_COVERAGE` and `MODULE_FIT_GATE` planning result;
 - mobile implications;
-- Complete Demo-Required Production Set and blocked items.
+- Complete Asset Set and blocked items.
+
+## Stage 7 creative contract
+
+For `contract_version: "1.0"`, every final Asset ID keeps `region`, `creative_role` and `media_type` separate and records the shopper task, user value, usage scene and proof object. Explicit Parent/Variation IDs are planning data; filename-based Variation guessing is not allowed.
+
+Gallery, A+, Brand Story / brand-content and video should have independent shopper jobs. A+ may deepen a Gallery topic, but should not simply reformat the Gallery board.

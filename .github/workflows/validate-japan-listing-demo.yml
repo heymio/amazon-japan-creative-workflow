@@ -1,4 +1,4 @@
-name: Validate Amazon Japan Creative Workflow M0
+name: Validate Amazon Japan Creative Workflow M1
 
 on:
   push:
@@ -21,7 +21,8 @@ jobs:
         run: python3 -m pip install --disable-pip-version-check --no-input Pillow
       - run: python3 scripts/selftest_provenance.py
       - run: python3 .agents/skills/amazon-japan-creative-workflow/scripts/selftest_router.py
-      - run: python3 .agents/skills/listing-planning/scripts/selftest_planning.py
+      - run: python3 .agents/skills/listing-strategy/scripts/selftest_strategy.py
+      - run: python3 .agents/skills/listing-strategy/scripts/selftest_strategy_v010.py
       - run: python3 .agents/skills/listing-production/scripts/selftest_production.py
       - run: python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
       - run: python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py

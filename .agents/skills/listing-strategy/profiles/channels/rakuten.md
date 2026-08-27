@@ -44,4 +44,4 @@ For long-image or text-heavy merchant content, define mobile reading order and i
 
 ## Planning outputs
 
-Record page target, editable areas/ownership, current builder/template constraints, Primary Reference, Channel Frontend Reference Pack, evergreen versus campaign split, mobile implications, page architecture and Complete Demo-Required Production Set.
+Record page target, editable areas/ownership, current builder/template constraints, Primary Reference, Channel Frontend Reference Pack, evergreen versus campaign split, mobile implications, page architecture and Complete Asset Set.

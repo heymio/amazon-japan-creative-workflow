@@ -34,3 +34,9 @@ Competitor pages can evidence competitor execution and frontend presentation. Th
 ## Handoff
 
 Planning should pass resolved channel structure, ownership, module constraints, and Primary Reference identifiers into the Production Handoff. Final implementation fidelity belongs to the later hardening plane.
+
+## Stage 5.5 ownership map
+
+Before page IA is locked, record platform capability, account capability, frontend visual evidence, brand-controlled regions and platform-controlled regions separately. Platform-generated ratings, sponsored content, recommendations, purchase controls and similar shell content remain contextual simulator surfaces rather than brand creative ownership unless current evidence says otherwise.
+
+The page plan should also identify independent Gallery, A+, brand-content and video shopper jobs where those regions are available.

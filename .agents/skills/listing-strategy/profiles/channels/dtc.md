@@ -51,4 +51,4 @@ Define mobile-first reading order, live-text preference, image/performance const
 
 ## Planning outputs
 
-Record CMS/component constraints, page/conversion sequence, content ownership, Primary Reference, Channel Frontend Reference Pack, mobile/performance/accessibility implications, analytics/experiment needs when requested, and the Complete Demo-Required Production Set.
+Record CMS/component constraints, page/conversion sequence, content ownership, Primary Reference, Channel Frontend Reference Pack, mobile/performance/accessibility implications, analytics/experiment needs when requested, and the Complete Asset Set.

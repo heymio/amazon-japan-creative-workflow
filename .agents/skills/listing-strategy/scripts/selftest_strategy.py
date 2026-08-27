@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Regression tests for the listing-planning Skill."""
+"""Regression tests for the listing-strategy Skill."""
 
 from datetime import datetime, timezone
 import sys
@@ -9,7 +9,7 @@ SKILL_DIR = Path(__file__).resolve().parents[1]
 SCRIPT_DIR = SKILL_DIR / "scripts"
 sys.path.insert(0, str(SCRIPT_DIR))
 
-from validate_planning_contracts import (  # noqa: E402
+from validate_strategy_contracts import (  # noqa: E402
     validate_creative_strategy,
     validate_production_handoff,
     validate_project_brief,
@@ -98,10 +98,10 @@ def valid_v032_handoff() -> str:
 
 def test_skill_exists_and_owns_only_planning_plane() -> None:
     text = read(SKILL_DIR / "SKILL.md").casefold()
-    assert "name: listing-planning" in text
+    assert "name: listing-strategy" in text
     for phrase in [
         "stage 0", "stage 7", "creative strategy kernel",
-        "production handoff", "complete demo-required production set",
+        "production handoff", "complete asset set",
     ]:
         assert phrase in text
     for forbidden in [
@@ -127,7 +127,7 @@ def test_deep_strategy_references_exist() -> None:
         "claim-compliance.md": ["verification queue", "visual can create a claim", "refresh trigger"],
         "channel-planning.md": ["primary reference", "platform capability", "frontend visual"],
         "module-fit.md": ["content_coverage", "module_fit_gate", "message != module"],
-        "planning-qa.md": ["complete demo-required production set", "gallery", "enhanced-content"],
+        "planning-qa.md": ["complete asset set", "gallery", "enhanced-content"],
     }
     for filename, phrases in required.items():
         text = read(SKILL_DIR / "references" / filename).casefold()
@@ -363,7 +363,7 @@ def main() -> int:
     tests = [v for k, v in globals().items() if k.startswith("test_") and callable(v)]
     for test in tests:
         test()
-    print(f"PASS: {len(tests)} listing-planning tests")
+    print(f"PASS: {len(tests)} listing-strategy legacy-compatibility tests")
     return 0
 
 

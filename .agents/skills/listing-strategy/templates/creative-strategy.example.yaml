@@ -1,8 +1,18 @@
+contract_version: "1.0"
 creative_strategy:
   target_user:
     - evidence-backed primary shopper segment
-  core_tension: "Primary shopper tension to resolve"
-  core_promise: "Core consumer promise"
+  core_tension: Primary shopper tension to resolve
+  core_promise: Core consumer promise
+
+  user_usage_understanding:
+    - user: Primary shopper
+      situation: Current situation supported by evidence
+      trigger: Event that creates the need
+      friction: Current approach or interruption
+      desired_outcome: Concrete user result
+      usage_scene: Visualizable Japanese consumer situation
+
   primary_purchase_reasons:
     - id: P0-1
       reason: Primary reason to buy
@@ -13,11 +23,23 @@ creative_strategy:
     - id: RTB-1
       evidence_ref: FACT-001
       statement: Evidence-backed reason to believe
+
   message_priority:
     p0:
       - P0-1
     p1: []
     p2: []
+
+  message_architecture:
+    - message: Primary reason to buy
+      user_value: Why the shopper should care
+      usage_scene: Visualizable usage situation
+      proof_object: Evidence object that makes the message visible
+      desired_takeaway: What the shopper should remember
+      visualizable: true
+      amazon_role: gallery
+      priority: P0
+
   japan_implications:
     - implication: Current JP market/channel implication supported by evidence
       evidence_ref: MARKET-001

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Amazon Japan Evidence Hardening"
+  short_description: "Fail-closed Stage 10 final evidence eligibility"
+  default_prompt: "Reconcile the exact Production Freeze, auditor evidence, Simulator bindings, and exact final HTML runtime evidence. Recompute Final eligibility fail-closed; do not trust declared PASS flags or repair creative inside hardening."

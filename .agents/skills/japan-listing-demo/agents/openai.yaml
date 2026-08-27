@@ -1,8 +1,0 @@
-interface:
-  display_name: "Japan Listing Demo"
-  short_description: "One-entry Japan listing strategy, production, and verified demo workflow"
-  brand_color: "#BC002D"
-  default_prompt: "Use japan-listing-demo as the thin router. Route Stage 0–7 to listing-planning, Stage 7.5–8 to listing-production, and Stage 8.5–10 to listing-hardening. Use Major Stage Checkpoints by default, honor Transition Commands immediately, keep the same-artifact Retry Budget at two autonomous attempts, and pass only formal stage handoff objects. Keep control-plane instructions out of production prompts. Route missing upstream decisions back instead of improvising them."
-
-policy:
-  allow_implicit_invocation: true

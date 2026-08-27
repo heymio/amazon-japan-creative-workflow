@@ -1,0 +1,8 @@
+interface:
+  display_name: "Amazon Japan Creative Workflow"
+  short_description: "Quality-first Amazon Japan listing strategy, production, and simulator QA"
+  brand_color: "#BC002D"
+  default_prompt: "Use amazon-japan-creative-workflow as the thin router. Preserve deep Stage 0–7 product, consumer, Japan-localization, message, and Amazon planning. Route Stage 7.5–8 to creative-production, Stage 8.4 and 9.2 to creative-quality, Stage 8.6–9 to listing-simulator-bridge, Stage 9.5 back to targeted creative-production, and Stage 10 to evidence-hardening plus final user acceptance. Treat 这张先过 as current-asset-only acceptance and 先这样 as non-advancing ambiguity. Keep production context narrow and diagnose before rework."
+
+policy:
+  allow_implicit_invocation: true

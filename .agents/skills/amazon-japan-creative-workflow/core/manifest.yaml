@@ -46,6 +46,25 @@ downstream_skills:
   - listing-simulator-bridge
   - evidence-hardening
 
+support_skills:
+  - listing-evidence-auditor
+
+legacy_compatibility_skills:
+  - japan-listing-demo
+  - listing-hardening
+
+release_contract:
+  schema_version: 1.0
+  version_source: VERSION
+  manifest_schema: contracts/release-manifest.schema.json
+  artifacts:
+    - one-install-skill
+    - codex-bundle
+  deterministic_zip: true
+  sha256_manifest: true
+  publication: manual-only
+  automatic_github_release: false
+
 execution_principles:
   - deep strategy precedes production
   - region is not creative role

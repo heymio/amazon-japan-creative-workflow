@@ -50,6 +50,7 @@ jobs:
               "contracts/asset-binding.schema.json",
               "contracts/simulator-manifest.schema.json",
               "contracts/final-eligibility.schema.json",
+              "contracts/release-manifest.schema.json",
               "profiles/amazon-jp/slot-taxonomy.json",
               ".agents/skills/listing-simulator-bridge/templates/template-registry.synthetic.json",
               "fixtures/adversarial/manifest.json",
@@ -67,3 +68,9 @@ jobs:
           B="$(sha256sum /tmp/pack-b.zip | awk '{print $1}')"
           test "$A" = "$B"
           python3 .agents/skills/listing-simulator-bridge/scripts/validate_import_pack.py /tmp/pack-a.zip
+      - name: Build and independently validate M5 release candidate
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/package_release.py --source-commit "$GITHUB_SHA" --output-dir /tmp/m5-release
+          python3 scripts/validate_release.py /tmp/m5-release

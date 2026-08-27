@@ -48,9 +48,9 @@
     },
     "artifacts": {
       "type": "object",
-      "required": ["one_install_skill", "codex_bundle"],
+      "required": ["plugin_bundle", "codex_bundle"],
       "properties": {
-        "one_install_skill": {"$ref": "#/$defs/artifact"},
+        "plugin_bundle": {"$ref": "#/$defs/artifact"},
         "codex_bundle": {"$ref": "#/$defs/artifact"}
       },
       "additionalProperties": false

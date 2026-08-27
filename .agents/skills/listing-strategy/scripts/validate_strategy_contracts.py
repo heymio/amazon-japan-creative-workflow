@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Strict structural validation for planning handoff artifacts.
+"""Strict structural validation for Stage 0–7 strategy handoff artifacts.
 
 The public distribution intentionally avoids a YAML runtime dependency. These
 machine contracts therefore accept a small, explicit YAML profile: 2-space
@@ -14,6 +14,23 @@ import ast
 import re
 from pathlib import Path
 from typing import Any
+
+CREATIVE_ROLES = {
+    "HERO_POSITIONING",
+    "DIFFERENTIATOR_PROOF",
+    "MECHANISM_PROOF",
+    "LIFESTYLE_USE_CASE",
+    "COMPARISON_DECISION",
+    "ECOSYSTEM_COMPATIBILITY",
+    "SPEC_INSTALLATION",
+    "OBJECTION_HANDLING",
+    "BRAND_STORY",
+}
+
+NEW_ASSET_FIELDS = (
+    "region", "slot", "shopper_task", "primary_message", "user_value",
+    "usage_scene", "proof_object", "evidence_mode", "creative_role", "media_type",
+)
 
 FORBIDDEN_HANDOFF = {
     "project_state_manifest",
@@ -243,10 +260,55 @@ def _unique_ids(items: list[Any], key: str, errors: list[str], path: str) -> set
     return seen
 
 
+
+
+def _contract_version(root: dict[str, Any], errors: list[str]) -> str | None:
+    if "contract_version" not in root:
+        return None
+    version = root.get("contract_version")
+    if version != "1.0":
+        errors.append("contract_version must be the string '1.0' when present")
+        return None
+    return "1.0"
+
+
+def _validate_listing_family(
+    container: dict[str, Any],
+    errors: list[str],
+    path: str,
+    *,
+    required: bool,
+) -> set[str]:
+    if "listing_family" not in container:
+        if required:
+            errors.append(f"missing required key: {path}.listing_family" if path else "missing required key: listing_family")
+        return set()
+    family = container.get("listing_family")
+    label = f"{path}.listing_family" if path else "listing_family"
+    if not isinstance(family, dict):
+        errors.append(f"{label} must be a mapping")
+        return set()
+    _non_empty_string(family, "parent_listing_id", errors, label)
+    variations = _require_type(family, "variations", list, errors, label)
+    if not isinstance(variations, list):
+        return set()
+    variation_ids = _unique_ids(variations, "variation_id", errors, f"{label}.variations")
+    for index, item in enumerate(variations):
+        if not isinstance(item, dict):
+            continue
+        item_path = f"{label}.variations[{index}]"
+        if "label" in item:
+            _non_empty_string(item, "label", errors, item_path)
+        if "attributes" in item and not isinstance(item.get("attributes"), dict):
+            errors.append(f"{item_path}.attributes must be a mapping when present")
+    return variation_ids
+
+
 def validate_project_brief(text: str) -> list[str]:
     root, errors = _parse_root(text)
     if root is None:
         return errors
+    version = _contract_version(root, errors)
     _require_type(root, "project", dict, errors)
     offers = _require_type(root, "offers", list, errors)
     product_truth = _require_type(root, "product_truth", dict, errors)
@@ -262,6 +324,7 @@ def validate_project_brief(text: str) -> list[str]:
     if isinstance(claim_boundaries, dict):
         for key in ["consumer_ready", "pending", "prohibited"]:
             _require_type(claim_boundaries, key, list, errors, "claim_boundaries")
+    _validate_listing_family(root, errors, "", required=version == "1.0")
     return errors
 
 
@@ -269,6 +332,7 @@ def validate_creative_strategy(text: str) -> list[str]:
     root, errors = _parse_root(text)
     if root is None:
         return errors
+    version = _contract_version(root, errors)
     strategy = _require_type(root, "creative_strategy", dict, errors)
     if not isinstance(strategy, dict):
         return errors
@@ -283,6 +347,35 @@ def validate_creative_strategy(text: str) -> list[str]:
     if isinstance(priority, dict):
         for key in ["p0", "p1", "p2"]:
             _require_type(priority, key, list, errors, "creative_strategy.message_priority")
+
+    if version == "1.0":
+        usage = _require_type(
+            strategy, "user_usage_understanding", list, errors, "creative_strategy"
+        )
+        if isinstance(usage, list):
+            for index, item in enumerate(usage):
+                path = f"creative_strategy.user_usage_understanding[{index}]"
+                if not isinstance(item, dict):
+                    errors.append(f"{path} must be a mapping")
+                    continue
+                for key in ["user", "situation", "trigger", "friction", "desired_outcome", "usage_scene"]:
+                    _non_empty_string(item, key, errors, path)
+
+        messages = _require_type(
+            strategy, "message_architecture", list, errors, "creative_strategy"
+        )
+        if isinstance(messages, list):
+            for index, item in enumerate(messages):
+                path = f"creative_strategy.message_architecture[{index}]"
+                if not isinstance(item, dict):
+                    errors.append(f"{path} must be a mapping")
+                    continue
+                for key in [
+                    "message", "user_value", "usage_scene", "proof_object",
+                    "desired_takeaway", "amazon_role", "priority",
+                ]:
+                    _non_empty_string(item, key, errors, path)
+                _require_type(item, "visualizable", bool, errors, path)
     return errors
 
 
@@ -407,6 +500,7 @@ def validate_production_handoff(text: str) -> list[str]:
     root, errors = _parse_root(text)
     if root is None:
         return errors
+    version = _contract_version(root, errors)
     handoff = _require_type(root, "production_handoff", dict, errors)
     if not isinstance(handoff, dict):
         return errors
@@ -419,6 +513,10 @@ def validate_production_handoff(text: str) -> list[str]:
     _require_type(handoff, "creative_strategy_ref", str, errors, "production_handoff")
     errors.extend(_find_forbidden(handoff))
 
+    variation_ids = _validate_listing_family(
+        handoff, errors, "production_handoff", required=version == "1.0"
+    )
+
     asset_ids: set[str] = set()
     if isinstance(asset_set, list):
         asset_ids = _unique_ids(asset_set, "asset_id", errors, "production_handoff.asset_set")
@@ -426,10 +524,27 @@ def validate_production_handoff(text: str) -> list[str]:
             if not isinstance(asset, dict):
                 continue
             path = f"production_handoff.asset_set[{index}]"
-            for key in ["role", "slot", "primary_message", "status"]:
-                _non_empty_string(asset, key, errors, path)
-            evidence_mode = _non_empty_string(asset, "evidence_mode", errors, path)
-            if evidence_mode is not None and evidence_mode not in EVIDENCE_MODES:
+            if version == "1.0":
+                for key in NEW_ASSET_FIELDS:
+                    _non_empty_string(asset, key, errors, path)
+                creative_role = asset.get("creative_role")
+                if isinstance(creative_role, str) and creative_role and creative_role not in CREATIVE_ROLES:
+                    errors.append(
+                        f"{path}.creative_role must be one of: {', '.join(sorted(CREATIVE_ROLES))}"
+                    )
+                if "variation_id" in asset and asset.get("variation_id") is not None:
+                    variation_id = asset.get("variation_id")
+                    if not isinstance(variation_id, str) or not variation_id.strip():
+                        errors.append(f"{path}.variation_id must be null or a non-empty string")
+                    elif variation_id not in variation_ids:
+                        errors.append(
+                            f"{path}.variation_id references undeclared variation: {variation_id}"
+                        )
+            else:
+                for key in ["role", "slot", "primary_message", "status"]:
+                    _non_empty_string(asset, key, errors, path)
+            evidence_mode = asset.get("evidence_mode")
+            if isinstance(evidence_mode, str) and evidence_mode not in EVIDENCE_MODES:
                 errors.append(
                     f"{path}.evidence_mode must be one of: {', '.join(sorted(EVIDENCE_MODES))}"
                 )
@@ -475,7 +590,7 @@ def validate_production_handoff(text: str) -> list[str]:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Validate a planning artifact")
+    parser = argparse.ArgumentParser(description="Validate a Stage 0–7 strategy artifact")
     parser.add_argument("kind", choices=["project-brief", "creative-strategy", "production-handoff"])
     parser.add_argument("path", type=Path)
     args = parser.parse_args()

@@ -45,4 +45,4 @@ Define mobile-safe image crops, text density, option flows and long-form reading
 
 ## Planning outputs
 
-Record store/page target, editable fields and ownership, template/integration constraints, Primary Reference, Channel Frontend Reference Pack, evergreen/commercial-content split, mobile implications, page architecture and Complete Demo-Required Production Set.
+Record store/page target, editable fields and ownership, template/integration constraints, Primary Reference, Channel Frontend Reference Pack, evergreen/commercial-content split, mobile implications, page architecture and Complete Asset Set.

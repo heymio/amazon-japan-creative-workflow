@@ -12,7 +12,7 @@ Expected: Stage 6.5 inventories sources and their intended downstream use. It do
 
 Stage 7 requires a Gallery-native proof asset and an enhanced-content explanation asset that do not yet exist.
 
-Expected: Planning assigns separate future Asset IDs/roles in the Complete Demo-Required Production Set and records any blockers. It does not audit nonexistent outputs.
+Expected: Planning assigns separate future Asset IDs/roles in the Complete Asset Set and records any blockers. It does not audit nonexistent outputs.
 
 ## Previously approved exact asset reuse
 

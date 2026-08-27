@@ -1,0 +1,6 @@
+interface:
+  display_name: "Listing Strategy"
+  short_description: "Deep Amazon Japan product, consumer, usage, localization, message, and page strategy"
+  default_prompt: "Plan Stage 0–7 deeply. Preserve product/offer/claim truth, consumer/VOC/competitor reasoning, concrete User/Situation/Trigger/Friction/Desired Outcome/Usage Scene understanding, Japan localization, channel capability/frontend evidence, Message Architecture, independent Gallery/A+/Brand Story narratives, Complete Asset Set accounting, Page Visual System, Evidence Mode, and explicit Parent/Variation IDs. End with compact strategy contracts for downstream creative production. Do not perform final visual production, simulator rendering, or delivery hardening."
+policy:
+  allow_implicit_invocation: true

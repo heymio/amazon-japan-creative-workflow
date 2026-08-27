@@ -81,3 +81,13 @@ Keep locale evidence traceable to current sources. Separate stable language conv
 ## Output
 
 Produce a Localization Brief that informs Message Architecture and the Creative Strategy Kernel. Production receives only the locale implications relevant to the current asset, not the entire localization research history.
+## Stage 4.2 four-layer localization model
+
+Use these four layers together:
+
+1. **Functional Localization** — product fit with relevant Japanese residential, installation, household, category and usage conditions.
+2. **Scene / Behavior Localization** — whether the depicted situation, movement, device placement, human interaction and reason-for-use plausibly occur in Japanese consumer life.
+3. **Message / Copy Localization** — natural `ja-JP` framing of the approved meaning, including mobile readability and claim conditions.
+4. **Visual Localization** — residential scale, room density, doors, furniture, body language, environment and other visual cues that make the use case credible rather than decorative.
+
+A Japanese-looking background does not rescue an implausible user action. Record the behavioral reason the product matters in the scene, and route unsupported Japan-specific assumptions back to evidence collection rather than turning them into creative direction.

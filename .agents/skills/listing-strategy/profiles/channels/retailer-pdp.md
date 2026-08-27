@@ -46,4 +46,4 @@ Define mobile crops, specification-table behavior, comparison density, accordion
 
 ## Planning outputs
 
-Record retailer/template, brand-versus-retailer ownership map, content/submission contract, Primary Reference, Channel Frontend Reference Pack, approval/refresh workflow, mobile implications, page architecture and Complete Demo-Required Production Set.
+Record retailer/template, brand-versus-retailer ownership map, content/submission contract, Primary Reference, Channel Frontend Reference Pack, approval/refresh workflow, mobile implications, page architecture and Complete Asset Set.

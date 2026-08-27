@@ -40,8 +40,14 @@ Gallery-native and enhanced-content assets are **separate production roles** wit
 
 ## Interaction planning
 
-If a carousel, hotspot, video, comparison, accordion, or other interactive module is selected, design interaction logic and content packing here. Do not leave interaction invention to Demo Assembly.
+If a carousel, hotspot, video, comparison, accordion, or other interactive module is selected, design interaction logic and content packing here. Do not leave interaction invention to later production or simulator review.
 
 ## Complete production requirement
 
-Stage 7 must enumerate the Complete Demo-Required Production Set. P0 proof coverage only proves differentiator support; it cannot mark the overall visual asset set complete.
+Stage 7 must enumerate the Complete Asset Set. P0 proof coverage only proves differentiator support; it cannot mark the overall visual asset set complete.
+
+## Region is not Creative Role
+
+Gallery, A+, Brand Story / brand-content and video are regions or media contexts. They are not Creative Roles. Assign the shopper job first, then map the asset to a verified region/template. This prevents an A+ module choice from becoming the creative brief by accident.
+
+A+ should add depth, proof or objection resolution rather than horizontally reformatting Gallery. Brand Story should add brand/portfolio trust rather than repeating product-feature boards.

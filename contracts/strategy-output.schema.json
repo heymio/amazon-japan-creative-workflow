@@ -1,0 +1,111 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heymio/amazon-japan-creative-workflow/contracts/strategy-output.schema.json",
+  "title": "Amazon Japan Stage 7 Strategy Output",
+  "type": "object",
+  "required": ["contract_version", "production_handoff"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "production_handoff": {
+      "type": "object",
+      "required": [
+        "project",
+        "listing_family",
+        "page_plan",
+        "asset_set",
+        "source_assets",
+        "product_invariants",
+        "creative_strategy_ref",
+        "global_visual_direction",
+        "page_visual_system",
+        "visual_benchmark_refs",
+        "prohibited",
+        "blocked_assets"
+      ],
+      "properties": {
+        "project": {"type": "object"},
+        "listing_family": {"$ref": "#/$defs/listing_family"},
+        "page_plan": {"type": "object"},
+        "asset_set": {"type": "array", "items": {"$ref": "#/$defs/asset"}},
+        "source_assets": {"type": "array"},
+        "product_invariants": {"type": "array"},
+        "creative_strategy_ref": {"type": "string", "minLength": 1},
+        "global_visual_direction": {"type": "array"},
+        "page_visual_system": {"type": "object"},
+        "visual_benchmark_refs": {"type": "array"},
+        "prohibited": {"type": "array"},
+        "blocked_assets": {"type": "array"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "variation": {
+      "type": "object",
+      "required": ["variation_id"],
+      "properties": {
+        "variation_id": {"type": "string", "minLength": 1},
+        "label": {"type": "string", "minLength": 1},
+        "attributes": {"type": "object"}
+      },
+      "additionalProperties": true
+    },
+    "listing_family": {
+      "type": "object",
+      "required": ["parent_listing_id", "variations"],
+      "properties": {
+        "parent_listing_id": {"type": "string", "minLength": 1},
+        "variations": {"type": "array", "items": {"$ref": "#/$defs/variation"}}
+      },
+      "additionalProperties": false
+    },
+    "asset": {
+      "type": "object",
+      "required": [
+        "asset_id",
+        "region",
+        "slot",
+        "shopper_task",
+        "primary_message",
+        "user_value",
+        "usage_scene",
+        "proof_object",
+        "evidence_mode",
+        "creative_role",
+        "media_type"
+      ],
+      "properties": {
+        "asset_id": {"type": "string", "minLength": 1},
+        "region": {"type": "string", "minLength": 1},
+        "slot": {"type": "string", "minLength": 1},
+        "shopper_task": {"type": "string", "minLength": 1},
+        "primary_message": {"type": "string", "minLength": 1},
+        "user_value": {"type": "string", "minLength": 1},
+        "usage_scene": {"type": "string", "minLength": 1},
+        "proof_object": {"type": "string", "minLength": 1},
+        "evidence_mode": {
+          "type": "string",
+          "enum": ["SOURCE_FAITHFUL", "CREATIVE_MOCK", "PROOF_VISUAL"]
+        },
+        "creative_role": {
+          "type": "string",
+          "enum": [
+            "HERO_POSITIONING",
+            "DIFFERENTIATOR_PROOF",
+            "MECHANISM_PROOF",
+            "LIFESTYLE_USE_CASE",
+            "COMPARISON_DECISION",
+            "ECOSYSTEM_COMPATIBILITY",
+            "SPEC_INSTALLATION",
+            "OBJECTION_HANDLING",
+            "BRAND_STORY"
+          ]
+        },
+        "media_type": {"type": "string", "minLength": 1},
+        "variation_id": {"type": ["string", "null"], "minLength": 1}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

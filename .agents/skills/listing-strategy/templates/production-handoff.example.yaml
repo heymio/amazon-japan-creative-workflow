@@ -1,9 +1,18 @@
+contract_version: "1.0"
 production_handoff:
   project:
     market: JP
     channel: amazon-jp
     locale: ja-JP
     product: Example Product
+
+  listing_family:
+    parent_listing_id: parent
+    variations:
+      - variation_id: black
+        label: ブラック
+        attributes:
+          color: ブラック
 
   page_plan:
     gallery:
@@ -15,23 +24,41 @@ production_handoff:
 
   asset_set:
     - asset_id: G1
-      role: gallery-native
-      slot: G1
+      region: gallery
+      slot: gallery-1
+      shopper_task: Recognize the product and core positioning quickly
       primary_message: Core positioning
+      user_value: Understand why the product is worth considering
+      usage_scene: Product-first neutral stage
+      proof_object: Exact product identity
       evidence_mode: SOURCE_FAITHFUL
-      status: READY
+      creative_role: HERO_POSITIONING
+      media_type: image
+      variation_id: null
     - asset_id: G2
-      role: gallery-native
-      slot: G2
+      region: gallery
+      slot: gallery-2
+      shopper_task: Understand the primary differentiator
       primary_message: Primary proof
+      user_value: See a concrete reason to choose the product
+      usage_scene: Evidence-backed use environment
+      proof_object: Direct differentiator proof
       evidence_mode: PROOF_VISUAL
-      status: READY
+      creative_role: DIFFERENTIATOR_PROOF
+      media_type: image
+      variation_id: black
     - asset_id: A1
-      role: enhanced-content
-      slot: A1
+      region: a-plus
+      slot: a-plus-1
+      shopper_task: Understand how the product creates value in use
       primary_message: Expanded lifestyle explanation
+      user_value: Connect the feature to a believable daily outcome
+      usage_scene: Evidence-backed Japanese home situation
+      proof_object: Situation plus product intervention
       evidence_mode: CREATIVE_MOCK
-      status: READY
+      creative_role: LIFESTYLE_USE_CASE
+      media_type: image
+      variation_id: null
 
   source_assets:
     - source_id: SRC-P01
@@ -62,7 +89,7 @@ production_handoff:
         product_scale: large
         proof_form: source-faithful-product
       - asset_id: G2
-        visual_role: mechanism-proof
+        visual_role: differentiator-proof
         scene_family: technical-detail
         composition_family: close-up-explainer
         tone: neutral-technical

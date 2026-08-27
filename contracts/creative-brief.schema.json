@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heymio/amazon-japan-creative-workflow/contracts/creative-brief.schema.json",
+  "title": "Amazon Japan Creative Brief",
+  "type": "object",
+  "required": [
+    "asset_id",
+    "region",
+    "creative_role",
+    "shopper_task",
+    "primary_message",
+    "user_value",
+    "usage_scene",
+    "proof_object",
+    "desired_takeaway",
+    "must_show",
+    "must_not_show"
+  ],
+  "properties": {
+    "asset_id": {"type": "string", "minLength": 1},
+    "region": {"type": "string", "minLength": 1},
+    "creative_role": {
+      "type": "string",
+      "enum": [
+        "HERO_POSITIONING",
+        "DIFFERENTIATOR_PROOF",
+        "MECHANISM_PROOF",
+        "LIFESTYLE_USE_CASE",
+        "COMPARISON_DECISION",
+        "ECOSYSTEM_COMPATIBILITY",
+        "SPEC_INSTALLATION",
+        "OBJECTION_HANDLING",
+        "BRAND_STORY"
+      ]
+    },
+    "shopper_task": {"type": "string", "minLength": 1},
+    "primary_message": {"type": "string", "minLength": 1},
+    "user_value": {"type": "string", "minLength": 1},
+    "usage_scene": {"type": "string", "minLength": 1},
+    "proof_object": {"type": "string", "minLength": 1},
+    "desired_takeaway": {"type": "string", "minLength": 1},
+    "must_show": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "must_not_show": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "variation_id": {"type": ["string", "null"], "minLength": 1}
+  },
+  "additionalProperties": true
+}

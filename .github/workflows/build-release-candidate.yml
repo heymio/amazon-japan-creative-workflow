@@ -42,6 +42,7 @@ jobs:
           python3 scripts/selftest_release_packaging.py
           python3 scripts/selftest_release_reliability.py
           python3 scripts/validate_agent_pressure_evals.py
+          python3 scripts/selftest_agent_pressure_results.py
       - name: Build deterministic Plugin and Codex release candidate
         run: |
           set -euo pipefail

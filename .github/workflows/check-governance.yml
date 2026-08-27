@@ -13,15 +13,21 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Fetch live branch and ruleset snapshots
+      - name: Fetch live branch and detailed ruleset snapshots
         env:
           GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
         shell: bash
         run: |
           set -euo pipefail
-          gh api repos/${{ github.repository }}/branches/main > /tmp/main-branch.json
-          gh api repos/${{ github.repository }}/rulesets > /tmp/rulesets.json
-      - name: Report governance state
+          gh api "repos/${REPO}/branches/main" > /tmp/main-branch.json
+          gh api "repos/${REPO}/rulesets" > /tmp/rulesets-list.json
+          {
+            for id in $(jq -r '.[].id' /tmp/rulesets-list.json); do
+              gh api "repos/${REPO}/rulesets/${id}"
+            done
+          } | jq -s '.' > /tmp/rulesets.json
+      - name: Report strict governance state
         shell: bash
         run: |
           set +e
@@ -30,5 +36,5 @@ jobs:
           if [ "$code" -eq 0 ]; then
             exit 0
           fi
-          echo "Governance is not yet PASS. This workflow reports state; M5.1 does not claim it can administer repository rules."
+          echo "Governance is not yet PASS. A valid release ruleset must be Active, target main, require PRs, require the validate check from GitHub Actions app 15368, block force pushes, and block deletion."
           exit "$code"

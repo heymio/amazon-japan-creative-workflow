@@ -1,0 +1,185 @@
+distribution: standalone
+distribution_version: 0.3.3
+normal_invocation: $japan-listing-demo
+
+upstream:
+  repository: heymio/gtm-listing-demo
+  version: 0.2.0
+  commit: b882526f5a683235d30f562006cf1984a9f0d9f9
+  provenance_note: historical standalone core provenance retained; v0.3.x runtime ownership is stage-local
+
+runtime_architecture:
+  router:
+    skill: japan-listing-demo
+    purpose: stage routing, checkpoints, transition commands, retry budget, context firewall, exception routing
+  planning:
+    skill: listing-planning
+    stages: 0-7
+    purpose: deep product, offer, claim, consumer, market, Japan-localization, channel, message, page and module planning plus compact page visual direction
+  production:
+    skill: listing-production
+    stages: 7.5-8
+    purpose: artifact-first production from Creative Strategy Kernel, Production Handoff and one-job Asset Packets with candidate locks and set-level creative QA
+  hardening:
+    skill: listing-hardening
+    stages: 8.5-10
+    purpose: exact final-file hardening, delivery validation, frontend fidelity, no-network Demo runtime verification, parity and final QA
+  auditor:
+    skill: listing-evidence-auditor
+    purpose: physical file identity, approval/provenance, semantic role, PROOF_VISUAL claim/source binding and required-set evidence reconciliation
+
+state_objects:
+  - Project Brief
+  - Creative Strategy Kernel
+  - Production Handoff
+  - Asset Ledger / Production Freeze
+  - Delivery State
+delivery_state_schema: 0.2
+
+execution_principles:
+  - Think deeply. Produce narrowly. Verify rigorously.
+  - Plan lightly means light control-plane overhead, not shallow strategy.
+  - Fresh Stage 6.5 uses Source Asset Intake; full project-wide audit is not mandatory before final assets exist.
+  - Targeted early audit is reserved for inherited or previously approved exact assets intended for reuse.
+  - Stage 8.5 runs mandatory full final-asset hardening.
+  - Delivery State 0.2 Demo hardening is fail-closed; caller state cannot disable mandatory pre-Demo audit.
+  - Required final assets are a union across authoritative plan, implementation, slot-contract and blocker/revision state; one non-empty source cannot override another.
+  - Creative USER_APPROVED state is separate from evidence verification.
+  - Production Freeze binds every required Asset ID to an exact selected candidate and output reference and cannot be ready while blockers, revisions or stale Set QA remain.
+  - Channel-native Demo readiness requires executable frontend fidelity and exact-Demo-SHA browser runtime gates.
+  - Browser runtime verification is no-network and covers 1440px and 390px plus both carousel directions when present.
+  - PROOF_VISUAL assets require explicit claim/fact/authoritative-source bindings and trusted claim review.
+  - Normal checkpoints use Done / Open / Next; full Stage Completion Manifest is exception-only.
+  - Ambiguous wording such as 先这样 does not advance stages; current-asset acceptance such as 这张先过 stays within Production unless the stage is complete.
+  - Transition commands advance immediately and same-artifact retries are bounded.
+  - Same art direction does not imply the same composition; set-level creative rhythm is planned and reviewed inside Production.
+  - User-selected exact candidates remain locked until explicit reopen.
+  - Source insufficiency does not automatically force Creative Mock rework; evidence entitlement follows Evidence Mode.
+  - Account-level capability evidence may be reused when current and non-conflicted; public defaults never embed private brand/account values.
+  - Scope changes are explicit and cleanup uses the smallest sufficient intervention.
+
+distribution_modes:
+  repository_codex:
+    layout: five sibling Skills under .agents/skills plus repository metadata required by overlay validation
+    skills:
+      - japan-listing-demo
+      - listing-planning
+      - listing-production
+      - listing-hardening
+      - listing-evidence-auditor
+    validation: validate_overlay.py must PASS after extraction
+  compatibility_zip:
+    root_skill: japan-listing-demo
+    embedded_internal_skills:
+      - listing-planning
+      - listing-production
+      - listing-hardening
+      - listing-evidence-auditor
+    internal_path: japan-listing-demo/internal-skills
+    limitation: single-context semantic-audit limitation remains explicit
+    validation: package-local validate_install.py must PASS after extraction
+  build_properties:
+    deterministic_zip: true
+    fixed_timestamp_and_permissions: true
+    symlink_input: rejected
+
+machine_policy:
+  channel_limits: data/channel-policy-limits.json
+  canonical_delivery_validator: ../listing-hardening/scripts/validate_delivery_state.py
+  compatibility_validator: scripts/validate_project_state.py
+  retained_gate_families:
+    - CHANNEL_MODULE_BUDGET_GATE
+    - APPROVAL_PROVENANCE_GATE
+    - MODULE_ORIGIN_GATE
+    - TRANSFORM_AUTH_GATE
+    - EVIDENCE_RECONCILIATION_GATE
+    - PRODUCTION_FREEZE_GATE
+    - ASSET_SLOT_GATE
+    - PRE_DEMO_ASSET_GATE
+    - FRONTEND_FIDELITY_GATE
+    - DEMO_RUNTIME_GATE
+    - DELIVERY_PARITY_GATE
+
+historical_patches:
+  - id: checkpointed-execution-v0.2.2
+    retained_behavior: Major Stage Checkpoints, Transition Command, bounded Retry Budget
+  - id: channel-native-demo-fidelity-v0.2.3
+    retained_behavior: Platform Capability versus Frontend Visual evidence, Primary Reference, Content Review Demo fallback
+  - id: delivery-integrity-v0.2.4
+    retained_behavior: role separation, module fit, asset-slot integrity, parity, targeted change impact
+  - id: executable-gates-v0.2.5
+    retained_behavior: external machine validation, module budget/origin, transform and approval provenance
+  - id: independent-evidence-auditor-v0.2.6
+    retained_behavior: real-file fingerprinting, exact approval binding, semantic role and complete required-set audit
+  - id: creative-first-hardening-v0.3.0
+    purpose: separate deep Planning, focused Production and final Hardening behind a thin router while preserving delivery safeguards
+    skills:
+      - listing-planning
+      - listing-production
+      - listing-hardening
+      - listing-evidence-auditor
+  - id: validator-integrity-v0.3.1
+    purpose: harden planning contracts, real-file fingerprint trust, exact Production Freeze asset-set equality, and delivery-state schema fail-fast behavior without changing workflow architecture
+    files:
+      - ../listing-planning/scripts/validate_planning_contracts.py
+      - ../listing-evidence-auditor/scripts/fingerprint_assets.py
+      - ../listing-evidence-auditor/scripts/reconcile_evidence.py
+      - ../listing-hardening/scripts/validate_delivery_state.py
+      - ../listing-hardening/scripts/_delivery_state_core.py
+      - scripts/package_skill.py
+  - id: production-ux-set-level-creative-qa-v0.3.2
+    purpose: improve first-pass production quality and team UX without adding a new Stage or Hardening gate
+    behaviors:
+      - Page Visual System and per-asset Evidence Mode in Production Handoff
+      - minimal same-region set context inside one-job Asset Packets
+      - account capability profile reuse hook
+      - exact candidate Selection Lock with explicit reopen history
+      - set-level Creative QA for page rhythm
+      - explicit scope revision and scope-aware Production Freeze accounting
+      - Smallest Sufficient Cleanup
+      - concise production continuation acknowledgement
+  - id: fail-closed-hard-verification-v0.3.3
+    purpose: remove fail-open hard-verification paths and make release/install verification exact-SHA, executable and adversarially tested
+    behaviors:
+      - mandatory non-empty pre-Demo hardening for Delivery State 0.2
+      - union required-asset derivation
+      - exact Asset ID to candidate/output Production Freeze binding
+      - executable FRONTEND_FIDELITY_GATE and DEMO_RUNTIME_GATE
+      - real-decoder-backed PNG/JPEG/WebP verification
+      - PROOF_VISUAL claim/source binding plus trusted claim review
+      - static Demo preflight separated from no-network browser runtime proof
+      - deterministic symlink-safe self-validating distribution archives
+      - release workflow self-validates the exact current main SHA in a read-only build job before a separate write-only publish job
+    files:
+      - ../listing-production/scripts/production_state.py
+      - ../listing-hardening/scripts/validate_delivery_state.py
+      - ../listing-hardening/scripts/validate_demo_html.py
+      - ../listing-hardening/scripts/validate_demo_runtime.py
+      - ../listing-evidence-auditor/scripts/fingerprint_assets.py
+      - ../listing-evidence-auditor/scripts/reconcile_evidence.py
+      - scripts/package_skill.py
+      - ../../../scripts/package_codex_bundle.py
+      - ../../../scripts/package_common.py
+      - ../../../.github/workflows/release-validated.yml
+
+update_policy:
+  - review upstream and platform/channel changes before altering packaged policy
+  - preserve one repository and one normal user invocation
+  - keep public runtime examples category-neutral and free of confidential project data
+  - run adversarial fail-closed regressions plus Planning, Production, Hardening, Evidence Auditor, Router and compatibility validator self-tests
+  - validate both five-Skill Codex bundle and one-install compatibility archive after extraction
+  - build release ZIPs deterministically and reject symlink inputs
+  - release only the exact current main SHA after the release workflow itself completes full hard verification in a contents-read build job; repository code never executes with contents-write
+  - final merge and release still require human review and explicit approval
+
+runtime_dependencies:
+  exact_image_decode:
+    package: Pillow
+    required_for: physical hard-verification PASS for PNG/JPEG/WebP assets
+    unavailable_behavior: fail-closed; no physical hard-verification PASS
+  demo_browser_runtime:
+    package: playwright
+    browser: chromium
+    required_for: DEMO_RUNTIME_GATE PASS
+    unavailable_behavior: UNVERIFIED/BLOCKED; static inspection cannot upgrade to PASS
+  install_reference: docs/install.md

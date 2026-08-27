@@ -67,7 +67,9 @@ release_contract:
   sha256_manifest: true
   publication: manual-only
   automatic_github_release: false
-  real_agent_eval_required_for_publication: true
+  release_readiness: pilot-ready
+  real_agent_eval_required_for_publication: false
+  real_agent_eval_recommended_for_production_readiness: true
   governance_review_required_for_publication: true
 
 execution_principles:

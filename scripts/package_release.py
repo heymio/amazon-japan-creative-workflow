@@ -41,6 +41,7 @@ RELEASE_DOCS = [
     "docs/evidence-hardening.md",
     "docs/release.md",
     "docs/agent-pressure-evals.md",
+    "docs/release-notes-v0.1.1.md",
 ]
 ROOT_METADATA = ["README.md", "VERSION", "LICENSE"]
 FORBIDDEN_PRIVATE_MARKERS = (b"/Users/", b"github_pat_", b"ghp_", b"AKIA")

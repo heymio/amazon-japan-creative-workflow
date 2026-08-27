@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import importlib.util
+import json
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -20,9 +21,65 @@ SET_QA_READY_STATUSES = _legacy.SET_QA_READY_STATUSES
 
 add_candidate = _legacy.add_candidate
 select_candidate = _legacy.select_candidate
-reopen_asset = _legacy.reopen_asset
 set_creative_status = _legacy.set_creative_status
 apply_scope_delta = _legacy.apply_scope_delta
+
+
+def _copy(value: dict) -> dict:
+    return json.loads(json.dumps(value))
+
+
+def record_auto_revision(ledger: dict, asset_id: str, candidate_id: str, output_ref: str, diagnosis: str) -> dict:
+    from cleanup_policy import auto_retry_eligibility
+
+    eligibility = auto_retry_eligibility(diagnosis)
+    if eligibility["allowed"] is not True:
+        return {"status": "BLOCKED", "reason": "UPSTREAM_STRATEGY_PROBLEM" if eligibility["route"] == "UPSTREAM" else "AUTO_RETRY_NOT_ALLOWED", "ledger": _copy(ledger)}
+
+    row = ledger.get("assets", {}).get(asset_id, {}) if isinstance(ledger, dict) else {}
+    count = row.get("auto_revision_count", 0) if isinstance(row, dict) else 0
+    if not isinstance(count, int) or isinstance(count, bool) or count < 0:
+        raise ValueError("auto_revision_count must be a non-negative integer")
+    if count >= 2:
+        return {"status": "BLOCKED", "reason": "AUTO_RETRY_BUDGET_EXHAUSTED", "ledger": _copy(ledger)}
+
+    try:
+        result = add_candidate(ledger, asset_id, candidate_id, output_ref)
+    except ValueError as exc:
+        if "reopen" in str(exc).casefold() or "locked" in str(exc).casefold():
+            return {"status": "BLOCKED", "reason": "SELECTION_LOCKED", "ledger": _copy(ledger)}
+        raise
+    asset = result["assets"][asset_id]
+    asset["auto_revision_count"] = count + 1
+    candidate = asset["candidates"][-1]
+    candidate["diagnosis"] = diagnosis
+    candidate["generation_kind"] = "AUTO_REVISION"
+    return {"status": "RECORDED", "reason": None, "ledger": result}
+
+
+def approve_candidate(ledger: dict, asset_id: str, candidate_id: str, output_ref: str, approval_ref: str) -> dict:
+    if not isinstance(output_ref, str) or not output_ref:
+        raise ValueError("output_ref must be a non-empty string")
+    row = ledger.get("assets", {}).get(asset_id, {}) if isinstance(ledger, dict) else {}
+    candidates = row.get("candidates", []) if isinstance(row, dict) else []
+    selected = next((candidate for candidate in candidates if isinstance(candidate, dict) and candidate.get("candidate_id") == candidate_id), None)
+    if selected is None:
+        raise ValueError(f"candidate_id not found for {asset_id}: {candidate_id}")
+    if selected.get("output_ref") != output_ref:
+        raise ValueError("output_ref does not match the exact candidate output_ref")
+    return select_candidate(ledger, asset_id, candidate_id, approval_ref)
+
+
+def reopen_asset(ledger: dict, asset_id: str, reason: str, actor: str = "user") -> dict:
+    if not isinstance(actor, str) or not actor.strip():
+        raise ValueError("actor must be a non-empty string")
+    result = _legacy.reopen_asset(ledger, asset_id, reason)
+    row = result["assets"][asset_id]
+    history = row.setdefault("reopen_history", [])
+    if not isinstance(history, list):
+        raise ValueError("reopen_history must be a list")
+    history.append({"reason": reason, "actor": actor})
+    return result
 
 
 def _ordered_unique(values: list[str]) -> list[str]:

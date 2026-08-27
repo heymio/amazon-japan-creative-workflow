@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/amazon-japan-creative-workflow/creative-quality.schema.json",
+  "title": "Asset Creative Quality Result",
+  "type": "object",
+  "required": ["status", "hard_blockers", "score", "dimensions", "minimum_failures", "recommendable", "notes", "evaluation_boundary"],
+  "properties": {
+    "status": {"enum": ["FAIL", "REVISE", "REVIEW", "PASS", "FINAL_QUALITY"]},
+    "hard_blockers": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "score": {"type": "number", "minimum": 0, "maximum": 100},
+    "dimensions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["message_clarity", "visual_proof_strength", "shopper_value_translation", "product_prominence_fidelity", "scene_credibility", "japan_localization", "visual_hierarchy_composition", "commercial_polish", "mobile_legibility"],
+      "properties": {
+        "message_clarity": {"type": "number", "minimum": 0, "maximum": 20},
+        "visual_proof_strength": {"type": "number", "minimum": 0, "maximum": 15},
+        "shopper_value_translation": {"type": "number", "minimum": 0, "maximum": 15},
+        "product_prominence_fidelity": {"type": "number", "minimum": 0, "maximum": 10},
+        "scene_credibility": {"type": "number", "minimum": 0, "maximum": 10},
+        "japan_localization": {"type": "number", "minimum": 0, "maximum": 10},
+        "visual_hierarchy_composition": {"type": "number", "minimum": 0, "maximum": 10},
+        "commercial_polish": {"type": "number", "minimum": 0, "maximum": 5},
+        "mobile_legibility": {"type": "number", "minimum": 0, "maximum": 5}
+      }
+    },
+    "minimum_failures": {"type": "array", "items": {"type": "string", "minLength": 1}},
+    "recommendable": {"type": "boolean"},
+    "notes": {"type": "array", "items": {"type": "string"}},
+    "evaluation_boundary": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

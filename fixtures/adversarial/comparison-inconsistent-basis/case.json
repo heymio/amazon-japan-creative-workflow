@@ -1,0 +1,6 @@
+{
+  "id": "comparison-inconsistent-basis",
+  "mode": "visual-eval",
+  "expected_not_final": true,
+  "expected_diagnosis": "STRATEGY_GAP"
+}

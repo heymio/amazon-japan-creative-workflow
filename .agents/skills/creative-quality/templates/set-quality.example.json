@@ -1,0 +1,7 @@
+{
+  "region": "gallery",
+  "status": "FAIL",
+  "diagnoses": ["VISUAL_REPETITION"],
+  "affected_asset_groups": [["G2", "G3", "G4"]],
+  "evaluation_boundary": "deterministic rules use supplied labels/IDs; semantic visual similarity remains a visual/model or human eval"
+}

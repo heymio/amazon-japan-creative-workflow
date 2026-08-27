@@ -1,0 +1,14 @@
+{
+  "cases": [
+    {"id": "gallery-three-same-composition", "mode": "deterministic", "expected_status": "FAIL", "expected_diagnosis": "VISUAL_REPETITION"},
+    {"id": "a-plus-repeats-gallery", "mode": "deterministic", "expected_status": "REVIEW", "expected_diagnosis": "MESSAGE_REDUNDANCY"},
+    {"id": "beautiful-but-unclear-message", "mode": "visual-eval", "expected_not_final": true, "expected_diagnosis_any": ["ASSET_DEFECT", "STRATEGY_GAP"]},
+    {"id": "japan-scene-unnatural-behavior", "mode": "visual-eval", "expected_not_final": true, "expected_diagnosis": "ASSET_DEFECT"},
+    {"id": "proof-without-proof-object", "mode": "deterministic", "expected_status": "FAIL", "expected_diagnosis": "STRATEGY_GAP"},
+    {"id": "product-identity-drift", "mode": "deterministic", "expected_status": "FAIL", "expected_diagnosis": "ASSET_DEFECT"},
+    {"id": "comparison-inconsistent-basis", "mode": "visual-eval", "expected_not_final": true, "expected_diagnosis": "STRATEGY_GAP"},
+    {"id": "invented-ui", "mode": "deterministic", "expected_status": "FAIL", "expected_diagnosis": "ASSET_DEFECT"},
+    {"id": "mobile-text-illegible", "mode": "visual-eval", "expected_not_final": true, "expected_diagnosis": "MOBILE_LEGIBILITY"},
+    {"id": "three-high-density-modules", "mode": "deterministic", "expected_status": "FAIL", "expected_diagnosis": "PAGE_RHYTHM"}
+  ]
+}

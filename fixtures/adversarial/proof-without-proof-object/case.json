@@ -1,0 +1,6 @@
+{
+  "id": "proof-without-proof-object",
+  "mode": "deterministic",
+  "expected_status": "FAIL",
+  "expected_diagnosis": "STRATEGY_GAP"
+}

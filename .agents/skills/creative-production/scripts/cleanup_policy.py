@@ -14,6 +14,31 @@ PROBLEM_CLASSES = {
     "PRODUCT_DISTORTION",
 }
 
+UPSTREAM_RETRY_BLOCKERS = {
+    "MISSING_PROOF_OBJECT",
+    "UNSUPPORTED_CLAIM",
+    "WRONG_SHOPPER_TASK",
+    "STRATEGY_GAP",
+    "MISSING_PRODUCT_SOURCE",
+    "MISSING_UI_SOURCE",
+}
+TARGETED_REVISION_PROBLEMS = {
+    "LOW_PROMINENCE",
+    "COPY_HIERARCHY",
+    "COMPOSITION_IMBALANCE",
+    "MOBILE_LEGIBILITY",
+    "SCENE_EXECUTION",
+    "AI_ARTIFACT",
+}
+
+
+def auto_retry_eligibility(problem_code: str) -> dict[str, object]:
+    if problem_code in UPSTREAM_RETRY_BLOCKERS:
+        return {"allowed": False, "route": "UPSTREAM"}
+    if problem_code in TARGETED_REVISION_PROBLEMS:
+        return {"allowed": True, "route": "TARGETED_REVISION"}
+    return {"allowed": False, "route": "MANUAL_REVIEW"}
+
 
 def _unique_ids(values: object, label: str) -> list[str]:
     if not isinstance(values, list):

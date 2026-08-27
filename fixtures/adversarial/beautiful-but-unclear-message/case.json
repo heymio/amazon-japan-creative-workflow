@@ -1,0 +1,9 @@
+{
+  "id": "beautiful-but-unclear-message",
+  "mode": "visual-eval",
+  "expected_not_final": true,
+  "expected_diagnosis_any": [
+    "ASSET_DEFECT",
+    "STRATEGY_GAP"
+  ]
+}

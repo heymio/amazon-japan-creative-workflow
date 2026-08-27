@@ -10,6 +10,16 @@ from typing import Any
 
 EVIDENCE_MODES = {"SOURCE_FAITHFUL", "CREATIVE_MOCK", "PROOF_VISUAL"}
 
+NEW_PACKET_KEYS = {
+    "creative_brief",
+    "product_identity_sources",
+    "ui_sources",
+    "page_visual_direction",
+    "nearest_neighbors",
+    "japan_scene_constraints",
+    "evidence_mode",
+}
+
 REQUIRED_TOP_LEVEL = {
     "asset_id",
     "role",
@@ -78,7 +88,41 @@ def validate_asset_packet(packet: dict) -> list[str]:
     return errors
 
 
+def _validate_new_generation_packet(packet: dict) -> list[str]:
+    from creative_brief import validate_creative_brief
+
+    errors: list[str] = []
+    extra = sorted(set(packet) - NEW_PACKET_KEYS)
+    errors.extend(f"forbidden generation-context key: {key}" for key in extra)
+    missing = sorted(NEW_PACKET_KEYS - set(packet))
+    errors.extend(f"missing generation-context key: {key}" for key in missing)
+
+    brief = packet.get("creative_brief")
+    brief_result = validate_creative_brief(brief) if isinstance(brief, dict) else {"ready": False, "errors": ["creative_brief"]}
+    errors.extend(f"creative_brief.{field}" for field in brief_result["errors"] if f"creative_brief.{field}" not in errors)
+
+    for key in ("product_identity_sources", "ui_sources", "nearest_neighbors", "japan_scene_constraints"):
+        if not isinstance(packet.get(key), list):
+            errors.append(key)
+    for key in ("product_identity_sources", "ui_sources", "japan_scene_constraints"):
+        value = packet.get(key)
+        if isinstance(value, list) and any(not isinstance(item, str) or not item.strip() for item in value):
+            errors.append(key)
+    if not isinstance(packet.get("page_visual_direction"), dict):
+        errors.append("page_visual_direction")
+    if packet.get("evidence_mode") not in EVIDENCE_MODES:
+        errors.append("evidence_mode")
+    return list(dict.fromkeys(errors))
+
+
 def project_generation_context(packet: dict) -> dict:
+    if "creative_brief" in packet:
+        errors = _validate_new_generation_packet(packet)
+        if errors:
+            raise ValueError("; ".join(errors))
+        return {key: packet[key] for key in NEW_PACKET_KEYS}
+
+    # Legacy v0.3.3 packet compatibility remains for imported projects.
     errors = validate_asset_packet(packet)
     if errors:
         raise ValueError("; ".join(errors))

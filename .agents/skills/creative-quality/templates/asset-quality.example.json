@@ -1,0 +1,22 @@
+{
+  "asset_id": "G03",
+  "creative_role": "DIFFERENTIATOR_PROOF",
+  "status": "PASS",
+  "hard_blockers": [],
+  "score": 89,
+  "dimensions": {
+    "message_clarity": 18,
+    "visual_proof_strength": 13,
+    "shopper_value_translation": 13,
+    "product_prominence_fidelity": 9,
+    "scene_credibility": 8,
+    "japan_localization": 8,
+    "visual_hierarchy_composition": 9,
+    "commercial_polish": 4,
+    "mobile_legibility": 5
+  },
+  "minimum_failures": [],
+  "recommendable": true,
+  "notes": ["Semantic dimension scores came from a visual/model evaluator and remain subject to human approval."],
+  "evaluation_boundary": "semantic scores are supplied by a visual/model evaluator or human; deterministic CI does not infer subjective aesthetics from pixels"
+}

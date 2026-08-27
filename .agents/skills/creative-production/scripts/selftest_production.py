@@ -19,11 +19,22 @@ SPEC.loader.exec_module(legacy)
 from production_state import apply_scope_delta, build_production_freeze  # noqa: E402
 
 MIGRATED = {
+    "test_production_skill_is_artifact_first",
     "test_freeze_refuses_revision_pending_asset",
     "test_removed_asset_no_longer_counts_toward_progress_or_freeze",
     "test_v032_freeze_requires_current_set_level_visual_review",
     "test_v032_set_qa_becomes_stale_when_approved_output_changes",
 }
+
+
+
+def test_creative_production_skill_is_artifact_first() -> None:
+    text = (SCRIPT_DIR.parent / "SKILL.md").read_text(encoding="utf-8").casefold()
+    for phrase in [
+        "name: creative-production", "stage 7.5", "stage 8",
+        "artifact-first", "one asset packet", "user_approved",
+    ]:
+        assert phrase in text, phrase
 
 
 def approved(asset_id: str, ref: str | None = None) -> dict:
@@ -135,7 +146,7 @@ def main() -> int:
             tests.append((name, value))
     for name, test in sorted(tests):
         test()
-    print(f"PASS: {len(tests)} listing-production tests (v0.3.3)")
+    print(f"PASS: {len(tests)} creative-production legacy-compatibility tests (v0.3.3)")
     return 0
 
 

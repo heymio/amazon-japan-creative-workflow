@@ -41,6 +41,7 @@ jobs:
       - run: python3 scripts/selftest_release_reliability.py
       - run: python3 scripts/validate_agent_pressure_evals.py
       - run: python3 scripts/selftest_agent_pressure_results.py
+      - run: python3 scripts/selftest_github_governance.py
       - name: Parse machine-readable contracts and fixtures
         run: |
           python3 - <<'PY'

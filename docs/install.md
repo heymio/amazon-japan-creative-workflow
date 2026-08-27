@@ -1,6 +1,6 @@
 # Amazon Japan Creative Workflow — install/use
 
-Current version: `0.1.0`.
+Current development/release-candidate version: `0.1.1`.
 
 ## User-facing entry
 
@@ -10,7 +10,7 @@ Invoke only:
 $amazon-japan-creative-workflow
 ```
 
-Current runtime areas:
+Runtime ownership remains:
 
 ```text
 Stage 0–7       → listing-strategy
@@ -22,72 +22,73 @@ Stage 9.5       → creative-production targeted rework
 Stage 10        → evidence-hardening
 ```
 
-`listing-evidence-auditor` is a support Skill used for independent exact-file evidence. It is not a separate user-facing workflow.
+`listing-evidence-auditor` is a support Skill. `listing-hardening` remains repository-only compatibility source for v0.3.3 and is not part of the current default distribution.
 
-The imported `listing-hardening` remains available in the repository only for v0.3.3 Delivery State / legacy Demo compatibility and regression coverage. New projects use `listing-simulator-bridge` as the page-integration layer and `evidence-hardening` as the Final eligibility layer. The external Amazon Japan Listing Simulator is the only intended page renderer.
+## v0.1.0 warning
 
-## Installation options
+Do **not** use `amazon-japan-creative-workflow-0.1.0.skill.zip` for new multi-Skill installations. That artifact embedded downstream Skills under `internal-skills/`, which is not the current OpenAI Plugin discovery layout.
 
-### One-install Skill ZIP
+For v0.1.0 pilot work, prefer the Codex bundle or repository checkout and treat release provenance as affected by the v0.1.0 declaration-only SHA issue.
+
+## M5.1 installation options
+
+### Plugin bundle — primary multi-Skill installable form
 
 Build or obtain:
 
 ```text
-amazon-japan-creative-workflow-0.1.0.skill.zip
+amazon-japan-creative-workflow-0.1.1-plugin.zip
 ```
 
-It contains one root Skill, `amazon-japan-creative-workflow`, with current runtime/support Skills embedded internally. Use this form where a single installed workflow entry is preferred.
+The archive contains:
+
+```text
+amazon-japan-creative-workflow/
+├── .codex-plugin/plugin.json
+├── skills/<skill-name>/...
+├── contracts/...
+├── profiles/...
+└── BUILD_INFO.json
+```
+
+The Plugin manifest points at `./skills/`, so ChatGPT/Codex plugin installation can discover the related Skill group as one installable experience.
 
 ### Codex project bundle
 
 Build or obtain:
 
 ```text
-amazon-japan-creative-workflow-0.1.0-codex-bundle.zip
+amazon-japan-creative-workflow-0.1.1-codex-bundle.zip
 ```
 
-Extract it at the project root so the `.agents/skills/` structure is preserved. This form is intended for repository-level use and source review.
+Extract it at the project root so `.agents/skills/` is preserved. This remains the recommended repository-level pilot path and the easiest form for source inspection.
 
-Both artifacts carry `BUILD_INFO.json` with exact version/source-commit metadata. Validate physical artifacts against the external release manifest and `SHA256SUMS`.
+### Repository checkout
+
+The repository itself remains the source of truth for development and pilot work.
 
 ## Build a release candidate
 
-From the exact source commit:
+The builder requires a clean tracked Git tree and derives provenance from the actual current HEAD. An optional `--source-commit` is a constraint that must equal HEAD; it is not trusted as the source of truth.
 
 ```bash
 python3 scripts/package_release.py \
-  --source-commit <40-character-git-sha> \
+  --source-commit "$(git rev-parse HEAD)" \
   --output-dir dist
 python3 scripts/validate_release.py dist
 ```
 
-See `docs/release.md` for the publication boundary. Building a release candidate does not create a GitHub Release or tag.
+The build fails if the expected SHA differs from HEAD or tracked files are dirty.
 
-## Stage 0–7 strategy
+## Release readiness beyond deterministic tests
 
-`listing-strategy` preserves Product Truth, offer/claim boundaries, consumer/JTBD/VOC/competitor reasoning, Japan localization, message architecture, Amazon IA, complete asset planning, Page Visual System, and Evidence Mode.
+A green deterministic build is necessary but not sufficient for formal v0.1.1 publication. Also required:
 
-For `contract_version: "1.0"`, Stage 4/5 outputs also structure shopper situation/value/proof and assign one of the nine Creative Roles per final asset.
+- a real-agent result covering all ten pressure-eval cases;
+- live GitHub `main` protection/ruleset review;
+- explicit user publication approval.
 
-## Creative production
-
-`creative-production` runs one Asset ID at a time from a ready Creative Brief. Default behavior is one strong candidate, not random multi-option generation. It uses provider-agnostic Production Modes, a narrow context firewall, at most two automatic targeted revisions, exact Selection Lock after user approval, and 2–4 asset waves only after 2–3 approved anchors lock the visual language.
-
-Creative approval is not evidence verification.
-
-## Creative quality
-
-`creative-quality` applies Hard Blocker precedence, role-specific thresholds, whole-set QA, and page-context diagnosis. Deterministic CI does not claim subjective pixel aesthetics are proven; semantic visual judgment remains model/human evaluation.
-
-## Simulator bridge
-
-`listing-simulator-bridge` validates explicit Asset/Slot/Variation/content bindings, resolves Parent→Variation overrides by semantic keys, and builds deterministic folder or ZIP import packs for the external Amazon Japan Listing Simulator. Unknown media relationships become Pending; filenames are never used to guess slots or variations.
-
-The synthetic registry under the Bridge templates is only for contract tests. Do not treat its IDs as the real Simulator 43-template registry.
-
-## Evidence hardening
-
-`evidence-hardening` recomputes Stage 10 Final eligibility from Production Freeze, `listing-evidence-auditor`, Simulator binding parity, and exact standalone HTML browser-runtime evidence. Missing independent/semantic/runtime evidence returns `UNVERIFIED`; deterministic contradictions return `FAIL`. Caller-authored `PASS` fields are never authoritative.
+See `docs/agent-pressure-evals.md`, `docs/main-protection-required.md`, and `docs/release.md`.
 
 ## Current validation
 
@@ -112,6 +113,8 @@ python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
 python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
 python3 .agents/skills/evidence-hardening/scripts/selftest_final_eligibility.py
 python3 scripts/selftest_release_packaging.py
+python3 scripts/selftest_release_reliability.py
+python3 scripts/validate_agent_pressure_evals.py
 ```
 
-The old v0.3.3 `package_skill.py`, old `scripts/package_codex_bundle.py`, overlay validation, and embedded legacy Demo distribution remain compatibility/history code and are not the current M5 release contract.
+The old v0.3.3 packagers remain compatibility/history code and are not the current M5.1 distribution contract.

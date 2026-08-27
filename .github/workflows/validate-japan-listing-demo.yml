@@ -48,6 +48,7 @@ jobs:
               "contracts/set-quality.schema.json",
               "contracts/asset-binding.schema.json",
               "contracts/simulator-manifest.schema.json",
+              "contracts/final-eligibility.schema.json",
               "profiles/amazon-jp/slot-taxonomy.json",
               ".agents/skills/listing-simulator-bridge/templates/template-registry.synthetic.json",
               "fixtures/adversarial/manifest.json",

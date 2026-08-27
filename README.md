@@ -14,7 +14,7 @@ Current development/release-candidate version: `0.1.1`.
 
 **Important:** the published v0.1.0 `amazon-japan-creative-workflow-0.1.0.skill.zip` is deprecated and unsupported as a reliable multi-Skill installation method. It embedded downstream Skills under a private `internal-skills/` layout that is not the current OpenAI Plugin discovery contract. Do not use that artifact for new installations.
 
-M5.1 replaces it with an official Plugin layout and keeps the Codex project bundle/repository checkout as supported pilot paths. v0.1.1 is not ready for formal publication until the real-agent pressure-eval and live repository-governance gates are satisfied.
+M5.1 replaces it with an official Plugin layout and keeps the Codex project bundle/repository checkout as supported paths. v0.1.1 is intended as a **pilot-ready** release: formal publication requires deterministic CI/artifact validation, live repository-governance PASS, and explicit user approval. Real-agent pressure eval remains recommended evidence for later production-readiness, but is not a v0.1.1 publication blocker.
 
 ## Why this exists
 
@@ -85,7 +85,7 @@ See [`docs/evidence-hardening.md`](docs/evidence-hardening.md).
 
 ## Agent pressure evals
 
-M5.1 defines ten pressure cases for transitions, current-asset approval, ambiguity, evidence gaps, rollback, targeted rework, Simulator Pending, fail-closed hardening, long-context routing, and a cross-Skill Golden Path. Deterministic CI validates the cases but does **not** pretend that fixtures prove real model behavior. Formal v0.1.1 publication requires an actual passing agent-run result bound to the intended release commit.
+M5.1 defines ten pressure cases for transitions, current-asset approval, ambiguity, evidence gaps, rollback, targeted rework, Simulator Pending, fail-closed hardening, long-context routing, and a cross-Skill Golden Path. Deterministic CI validates the cases but does **not** pretend that fixtures prove real model behavior. A real-agent run remains recommended before calling the workflow production-ready; absence of that run must remain visible rather than being treated as implicit PASS.
 
 See [`docs/agent-pressure-evals.md`](docs/agent-pressure-evals.md).
 

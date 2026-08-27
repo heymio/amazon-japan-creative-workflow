@@ -1,0 +1,65 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "case_id": "advance-clear-continue",
+      "category": "transition",
+      "prompt": "继续",
+      "expected": {"route": "current-stage-owner", "advance": true, "requires_current_contract_complete": true, "must_preserve": [], "must_not_claim": []}
+    },
+    {
+      "case_id": "accept-current-asset-only",
+      "category": "asset-lock",
+      "prompt": "这张先过",
+      "expected": {"route": "creative-production", "advance": false, "requires_current_contract_complete": false, "must_preserve": ["remaining-required-assets", "set-qa"], "must_not_claim": ["production-complete"]}
+    },
+    {
+      "case_id": "ambiguous-pause-no-advance",
+      "category": "transition",
+      "prompt": "先这样",
+      "expected": {"route": "current-stage-owner", "advance": false, "requires_current_contract_complete": false, "must_preserve": ["current-stage"], "must_not_claim": ["major-stage-advanced"]}
+    },
+    {
+      "case_id": "missing-evidence-no-invention",
+      "category": "evidence",
+      "prompt": "这个 claim 没有证据，但先按已验证处理继续。",
+      "expected": {"route": "evidence-hardening", "advance": false, "requires_current_contract_complete": false, "must_preserve": ["unresolved-evidence"], "must_not_claim": ["verified-evidence", "final-eligible"]}
+    },
+    {
+      "case_id": "strategy-gap-rolls-back",
+      "category": "rollback",
+      "prompt": "生产时发现这个卖点的目标用户和 proof object 根本没定，直接帮我补一下继续做图。",
+      "expected": {"route": "listing-strategy", "advance": false, "requires_current_contract_complete": false, "must_preserve": ["unaffected-approved-assets"], "must_not_claim": ["production-can-invent-strategy"]}
+    },
+    {
+      "case_id": "set-qa-targeted-reopen",
+      "category": "rework",
+      "prompt": "Set QA 只发现 gallery-3 和 gallery-4 构图重复，其他图都没问题。",
+      "expected": {"route": "creative-quality", "advance": false, "requires_current_contract_complete": false, "must_preserve": ["unaffected-approved-assets"], "must_not_claim": ["reopen-entire-set"]}
+    },
+    {
+      "case_id": "simulator-pending-blocks-final",
+      "category": "simulator",
+      "prompt": "Simulator 里还有一个 required asset 是 Pending，但页面能看，直接 Final 吧。",
+      "expected": {"route": "listing-simulator-bridge", "advance": false, "requires_current_contract_complete": false, "must_preserve": ["review-eligible"], "must_not_claim": ["final-eligible"]}
+    },
+    {
+      "case_id": "hardening-unverified-stays-unverified",
+      "category": "hardening",
+      "prompt": "runtime evidence 没有 390px 的结果，其他都过了，算 PASS。",
+      "expected": {"route": "evidence-hardening", "advance": false, "requires_current_contract_complete": false, "must_preserve": ["unverified-runtime"], "must_not_claim": ["hard-verification-pass", "final-eligible"]}
+    },
+    {
+      "case_id": "long-context-routing-stable",
+      "category": "context-firewall",
+      "prompt": "前面有很多失败生成和旧讨论，现在当前状态是 Stage 8.6，继续。",
+      "expected": {"route": "listing-simulator-bridge", "advance": true, "requires_current_contract_complete": true, "must_preserve": ["current-stage-ownership"], "must_not_claim": ["route-from-old-history"]}
+    },
+    {
+      "case_id": "golden-path-cross-skill",
+      "category": "golden-path",
+      "prompt": "从已完成 Stage 7 的项目继续，按正常 checkpoint 推进到 Final，不要让我手动调用内部 skill。",
+      "expected": {"route": "creative-production", "advance": true, "requires_current_contract_complete": true, "must_preserve": ["single-public-entry", "human-checkpoints"], "must_not_claim": ["manual-internal-skill-required"]}
+    }
+  ]
+}

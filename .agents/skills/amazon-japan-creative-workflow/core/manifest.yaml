@@ -1,5 +1,5 @@
-distribution: standalone
-distribution_version: 0.1.0
+distribution: plugin-plus-codex-bundle
+distribution_version: 0.1.1
 normal_invocation: $amazon-japan-creative-workflow
 
 baseline:
@@ -58,12 +58,17 @@ release_contract:
   version_source: VERSION
   manifest_schema: contracts/release-manifest.schema.json
   artifacts:
-    - one-install-skill
+    - plugin-bundle
     - codex-bundle
+  plugin_manifest: .codex-plugin/plugin.json
+  plugin_skills_path: ./skills/
   deterministic_zip: true
+  git_provenance: verified-clean-head
   sha256_manifest: true
   publication: manual-only
   automatic_github_release: false
+  real_agent_eval_required_for_publication: true
+  governance_review_required_for_publication: true
 
 execution_principles:
   - deep strategy precedes production

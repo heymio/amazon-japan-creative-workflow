@@ -1,0 +1,6 @@
+{
+  "id": "product-identity-drift",
+  "mode": "deterministic",
+  "expected_status": "FAIL",
+  "expected_diagnosis": "ASSET_DEFECT"
+}

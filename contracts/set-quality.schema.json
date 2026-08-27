@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/amazon-japan-creative-workflow/set-quality.schema.json",
+  "title": "Set Creative Quality Result",
+  "type": "object",
+  "required": ["region", "status", "diagnoses", "affected_asset_groups", "evaluation_boundary"],
+  "properties": {
+    "region": {"type": "string", "minLength": 1},
+    "status": {"enum": ["PASS", "REVIEW", "FAIL"]},
+    "diagnoses": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["ASSET_DEFECT", "MESSAGE_REDUNDANCY", "VISUAL_REPETITION", "PAGE_RHYTHM", "MOBILE_LEGIBILITY", "ROLE_OVERLAP", "ART_DIRECTION_DRIFT", "STRATEGY_GAP"]
+      }
+    },
+    "affected_asset_groups": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "minItems": 1,
+        "items": {"type": "string", "minLength": 1}
+      }
+    },
+    "evaluation_boundary": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}

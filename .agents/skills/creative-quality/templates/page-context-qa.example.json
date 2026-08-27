@@ -1,0 +1,10 @@
+{
+  "issue_code": "THREE_SAME_COMPOSITION",
+  "diagnosis_family": "VISUAL_REPETITION",
+  "observed_problem": "G2–G4 use the same copy-left/product-right composition in sequence.",
+  "root_cause": "The controlled batch preserved layout instead of only preserving visual language.",
+  "affected_assets": ["G3"],
+  "preserved_assets": ["G2", "G4"],
+  "exact_change": "Reopen G3 only and change composition_family while preserving message, proof object, and product identity.",
+  "expected_improvement": "Restore gallery swipe rhythm without regenerating already-good approved assets."
+}

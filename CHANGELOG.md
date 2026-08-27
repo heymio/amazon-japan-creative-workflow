@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.1.0-dev — Amazon Japan Creative Workflow M0–M2
+
+- Created the independent Public `amazon-japan-creative-workflow` product from the exact validated `japan-listing-demo v0.3.3` tree while preserving MIT provenance.
+- Migrated Stage 0–7 to `listing-strategy` with explicit shopper situation/value/proof, nine Creative Roles, Japan localization profiles, and Parent/Variation contract support.
+- Migrated Stage 7.5–8 production to `creative-production` with fail-closed Creative Brief readiness, seven provider-agnostic Production Modes, narrow context projection, one-strong-candidate default, at most two automatic targeted revisions, exact Selection Lock, reopen history, and anchor-first 2–4 asset waves.
+- Added `creative-quality` with Hard Blocker precedence, nine-dimension diagnostic scoring, role-specific minimums, deterministic Set QA, A+ incremental-value checks, eight page-context diagnosis families, and public-safe adversarial eval metadata.
+- Kept subjective aesthetics outside deterministic CI: visual/model or human evaluators supply semantic judgments; final creative acceptance remains human.
+- Simulator interoperability, evidence-hardening extraction, final packaging/release, and the real pilot remain later milestones.
+
 ## 0.3.3 — Fail-Closed Hard Verification
 
 - Made Delivery State 0.2 **fail closed** for Demo delivery: pre-Demo hardening and evidence audit are mandatory, cannot be disabled by caller-authored `pre_9_required=false`, and an empty required asset set cannot pass.

@@ -24,7 +24,7 @@ Stage 9.5     creative-production targeted rework
 Stage 10      evidence-hardening + final acceptance
 ```
 
-M0 establishes the independent Router and locks the final ownership model. The downstream baseline Skill directories are migrated into their final names in later milestones; existing baseline implementations remain available during that migration so strategy, production, evidence, and hardening behavior stays testable.
+M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strategy`; M2 adds `creative-production` and `creative-quality` with Creative Brief readiness, provider-agnostic Production Modes, bounded targeted retries, Selection Lock, anchor-first waves, Asset QA, Set QA, and page-context diagnosis. Simulator interoperability and final evidence extraction remain later milestones.
 
 ## Core operating principles
 

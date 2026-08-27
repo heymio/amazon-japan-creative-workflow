@@ -1,0 +1,6 @@
+{
+  "id": "three-high-density-modules",
+  "mode": "deterministic",
+  "expected_status": "FAIL",
+  "expected_diagnosis": "PAGE_RHYTHM"
+}

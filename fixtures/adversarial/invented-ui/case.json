@@ -1,0 +1,6 @@
+{
+  "id": "invented-ui",
+  "mode": "deterministic",
+  "expected_status": "FAIL",
+  "expected_diagnosis": "ASSET_DEFECT"
+}

@@ -1,6 +1,6 @@
 # Optional Team GPT setup
 
-A team-facing Custom GPT can make `japan-listing-demo` easier to discover and resume, but it is not the execution source of truth.
+A team-facing Custom GPT can make `amazon-japan-creative-workflow` easier to discover and resume, but it is not the execution source of truth.
 
 The architecture contract is:
 
@@ -18,20 +18,20 @@ The GPT may help users:
 - choose the target channel/page type;
 - upload product, GTM, VOC, competitor, UI, render, and frontend-reference materials;
 - understand the current Major Stage Checkpoint;
-- invoke the installed `$japan-listing-demo` workflow;
+- invoke the installed `$amazon-japan-creative-workflow` workflow;
 - use web/image capabilities when the current stage requires them.
 
-The GPT should not duplicate the detailed Planning, Production, Hardening, or Evidence Auditor rules in its own Instructions.
+The GPT should not duplicate the detailed Strategy, Creative Production, Creative Quality, or Hardening rules in its own Instructions.
 
 ## Recommended GPT instructions
 
 Keep the GPT prompt short. For example:
 
 ```text
-Use the installed japan-listing-demo workflow as the execution source of truth.
+Use the installed amazon-japan-creative-workflow workflow as the execution source of truth.
 Help team members create or resume a Japan listing project, upload product/GTM/visual inputs, and follow the workflow's Major Stage Checkpoints.
 Do not duplicate the detailed workflow rules in GPT Instructions.
-Keep the normal user-facing invocation and project flow simple; internal Planning, Production, Hardening, and Evidence Auditor Skills are routed by japan-listing-demo.
+Keep the normal user-facing invocation and project flow simple; internal Planning, Production, Hardening, and Evidence Auditor Skills are routed by amazon-japan-creative-workflow.
 ```
 
 ## Capabilities
@@ -49,7 +49,7 @@ Exact product capabilities can change over time, so verify the currently availab
 The teammate experience should remain:
 
 ```text
-Open the team GPT or invoke $japan-listing-demo
+Open the team GPT or invoke $amazon-japan-creative-workflow
 ↓
 Upload source materials
 ↓
@@ -66,7 +66,7 @@ Review generated visuals
 Review verified demo
 ```
 
-Do not ask ordinary team members to manually invoke `listing-planning`, `listing-production`, `listing-hardening`, or `listing-evidence-auditor`.
+Do not ask ordinary team members to manually invoke `listing-strategy`, `creative-production`, `creative-quality`, or legacy hardening/auditor internals.
 
 ## Source of truth
 

@@ -1,0 +1,37 @@
+assets:
+  G01:
+    region: gallery
+    creative_role: HERO_POSITIONING
+    status: USER_APPROVED
+    auto_revision_count: 1
+    candidates:
+      - candidate_id: G01-v1
+        output_ref: outputs/gallery/g01-v1.png
+        status: REJECTED
+      - candidate_id: G01-v2
+        output_ref: outputs/gallery/g01-v2.png
+        status: USER_SELECTED
+        diagnosis: LOW_PROMINENCE
+        generation_kind: AUTO_REVISION
+    selected_candidate_id: G01-v2
+    latest_candidate_id: G01-v2
+    current_output_ref: outputs/gallery/g01-v2.png
+    approval_ref: chat:creative-approval-1
+    reopened: false
+    reopen_history: []
+  G02:
+    region: gallery
+    creative_role: DIFFERENTIATOR_PROOF
+    status: REVIEW
+    auto_revision_count: 0
+    candidates:
+      - candidate_id: G02-v1
+        output_ref: outputs/gallery/g02-v1.png
+        status: REVIEW
+    latest_candidate_id: G02-v1
+
+production_wave_state:
+  anchor_asset_ids: [G01, G02]
+  visual_language_locked: false
+  active_wave: []
+  wave_stop_history: []

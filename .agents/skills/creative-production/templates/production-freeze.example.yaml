@@ -1,0 +1,38 @@
+production_freeze:
+  expected_assets: 3
+  required_asset_ids:
+    - G01
+    - G02
+    - A01
+  user_approved_assets:
+    - G01
+  blocked_assets: []
+  revision_pending:
+    - G02
+    - A01
+  approved_outputs:
+    G01:
+      candidate_id: G01-v2
+      output_ref: outputs/gallery/g01-v2.png
+  set_qa_status: MISSING
+  ready_for_hardening: false
+
+# Production Freeze remains fail-closed. It becomes ready only when:
+# - expected_assets is positive and equals the authoritative required Asset-ID set;
+# - user_approved_assets exactly equals that required set;
+# - blocked_assets and revision_pending are empty;
+# - approved_outputs has one exact candidate_id/output_ref binding per required Asset ID;
+# - the final whole-set review is current for those exact output refs;
+# - ready_for_hardening is true.
+#
+# Example final Set QA:
+# set_qa:
+#   status: CLEAR
+#   reviewed_asset_ids: [G01, G02, A01]
+#   reviewed_output_refs:
+#     G01: outputs/gallery/g01-v2.png
+#     G02: outputs/gallery/g02-v1.png
+#     A01: outputs/a-plus/a01-v3.png
+#   visual_review_ref: set-review:final-v1
+#
+# Any approved output change makes that review stale and requires Set QA again.

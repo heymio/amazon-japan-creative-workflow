@@ -1,0 +1,6 @@
+{
+  "id": "mobile-text-illegible",
+  "mode": "visual-eval",
+  "expected_not_final": true,
+  "expected_diagnosis": "MOBILE_LEGIBILITY"
+}

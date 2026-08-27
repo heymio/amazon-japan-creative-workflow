@@ -1,0 +1,6 @@
+{
+  "id": "gallery-three-same-composition",
+  "mode": "deterministic",
+  "expected_status": "FAIL",
+  "expected_diagnosis": "VISUAL_REPETITION"
+}

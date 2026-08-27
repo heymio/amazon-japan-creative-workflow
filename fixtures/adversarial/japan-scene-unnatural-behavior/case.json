@@ -1,0 +1,6 @@
+{
+  "id": "japan-scene-unnatural-behavior",
+  "mode": "visual-eval",
+  "expected_not_final": true,
+  "expected_diagnosis": "ASSET_DEFECT"
+}

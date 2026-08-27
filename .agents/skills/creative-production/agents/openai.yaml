@@ -1,0 +1,4 @@
+interface:
+  display_name: "Amazon Japan Creative Production"
+  short_description: "Quality-first asset production with bounded targeted revisions"
+  default_prompt: "Produce the current approved Amazon Japan creative asset from its Creative Brief using the narrow production context, preserve source truth, and do not advance without the required human approval."

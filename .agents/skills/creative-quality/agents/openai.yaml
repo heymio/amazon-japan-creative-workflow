@@ -1,0 +1,4 @@
+interface:
+  display_name: "Amazon Japan Creative Quality"
+  short_description: "Role-aware asset/set QA and page-context diagnosis"
+  default_prompt: "Evaluate the supplied creative evidence against its role-specific shopper task, separate hard blockers from semantic quality judgments, and never represent a deterministic score as objective proof of aesthetics."

@@ -1,0 +1,17 @@
+creative_brief:
+  asset_id: G03
+  region: gallery
+  media_type: image
+  creative_role: DIFFERENTIATOR_PROOF
+  shopper_task: Understand the primary differentiator quickly
+  primary_message: Wide coverage reduces blind spots
+  user_value: See more of the entrance area with less manual adjustment
+  usage_scene: Realistic Japanese detached-home entrance
+  proof_object: Coverage relationship anchored to the authoritative product orientation
+  desired_takeaway: This product covers more of the area I care about
+  must_show:
+    - authoritative product identity
+    - visible coverage relationship
+  must_not_show:
+    - invented application UI
+    - impossible coverage geometry

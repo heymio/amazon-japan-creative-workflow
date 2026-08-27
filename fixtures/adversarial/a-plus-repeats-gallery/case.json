@@ -1,0 +1,6 @@
+{
+  "id": "a-plus-repeats-gallery",
+  "mode": "deterministic",
+  "expected_status": "REVIEW",
+  "expected_diagnosis": "MESSAGE_REDUNDANCY"
+}

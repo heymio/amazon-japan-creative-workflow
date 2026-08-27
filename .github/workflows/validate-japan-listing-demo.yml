@@ -1,4 +1,4 @@
-name: Validate Amazon Japan Creative Workflow M1
+name: Validate Amazon Japan Creative Workflow M2
 
 on:
   push:
@@ -23,6 +23,26 @@ jobs:
       - run: python3 .agents/skills/amazon-japan-creative-workflow/scripts/selftest_router.py
       - run: python3 .agents/skills/listing-strategy/scripts/selftest_strategy.py
       - run: python3 .agents/skills/listing-strategy/scripts/selftest_strategy_v010.py
-      - run: python3 .agents/skills/listing-production/scripts/selftest_production.py
+      - run: python3 .agents/skills/creative-production/scripts/selftest_creative_brief.py
+      - run: python3 .agents/skills/creative-production/scripts/selftest_production.py
+      - run: python3 .agents/skills/creative-production/scripts/selftest_creative_state.py
+      - run: python3 .agents/skills/creative-quality/scripts/selftest_asset_quality.py
+      - run: python3 .agents/skills/creative-quality/scripts/selftest_set_quality.py
+      - run: python3 .agents/skills/creative-quality/scripts/selftest_diagnosis.py
       - run: python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
       - run: python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
+      - name: Parse machine-readable contracts and fixtures
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          for path in [
+              "contracts/creative-brief.schema.json",
+              "contracts/strategy-output.schema.json",
+              "contracts/creative-quality.schema.json",
+              "contracts/set-quality.schema.json",
+              "fixtures/adversarial/manifest.json",
+          ]:
+              json.loads(Path(path).read_text(encoding="utf-8"))
+          print("PASS: M2 JSON contracts parse")
+          PY

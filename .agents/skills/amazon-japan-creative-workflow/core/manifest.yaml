@@ -1,0 +1,60 @@
+distribution: standalone
+distribution_version: 0.1.0
+normal_invocation: $amazon-japan-creative-workflow
+
+baseline:
+  repository: heymio/japan-listing-demo
+  version: v0.3.3
+  commit: 67dbb772398af1ff67547b12bb401d96e2a588d8
+  relationship: independent-snapshot
+
+market_scope:
+  market: JP
+  locale: ja-JP
+  channel: amazon-jp
+  primary_surface: amazon-japan-shopping-app
+
+runtime_architecture:
+  router:
+    skill: amazon-japan-creative-workflow
+    purpose: stage routing, concise checkpoints, transition semantics, retry discipline, context firewall, and targeted exception routing
+  strategy:
+    skill: listing-strategy
+    stages: 0-7
+    purpose: product/offer/claim truth, consumer/VOC/competitor reasoning, Japan localization, message architecture, Amazon page planning, complete asset set, Page Visual System, Evidence Mode
+  production:
+    skill: creative-production
+    stages: 7.5-8,9.5
+    purpose: creative-brief execution, production-mode choice, candidate generation, bounded targeted retry, user approval, Selection Lock, smallest-sufficient rework
+  quality:
+    skill: creative-quality
+    stages: 8.4,9.2
+    purpose: asset quality, role-specific thresholds, whole-set narrative/rhythm, page-context diagnosis
+  simulator_bridge:
+    skill: listing-simulator-bridge
+    stages: 8.6-9
+    purpose: explicit asset/content/variation bindings, deterministic import packs, page-context review exchange with external simulator
+  hardening:
+    skill: evidence-hardening
+    stages: 10
+    purpose: exact final-output identity, approval/provenance, required-set completeness, claim/source and physical evidence safeguards
+
+downstream_skills:
+  - listing-strategy
+  - creative-production
+  - creative-quality
+  - listing-simulator-bridge
+  - evidence-hardening
+
+execution_principles:
+  - deep strategy precedes production
+  - region is not creative role
+  - template is not creative role
+  - one asset job has one primary shopper task
+  - user sees qualified candidates, not raw first attempts
+  - asset pass does not imply set pass
+  - diagnose before rework
+  - smallest sufficient rework preserves accepted unaffected assets
+  - external simulator is the only Amazon page renderer
+  - evidence hardening remains fail-closed for final eligibility
+  - no automatic merge or release

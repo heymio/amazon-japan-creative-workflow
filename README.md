@@ -1,34 +1,52 @@
 # Amazon Japan Creative Workflow
 
-A quality-first workflow for Amazon Japan listing strategy, creative production, creative QA, simulator interoperability, and final evidence safeguards.
+`amazon-japan-creative-workflow` is an independent, quality-first workflow for Amazon Japan listing strategy, creative production, creative QA, simulator interoperability, and final evidence safeguards.
 
-## Status
-
-This repository is an independent product derived from the validated `heymio/japan-listing-demo` v0.3.3 baseline. It is not a GitHub fork relationship and does not track upstream automatically.
-
-Current development version: `0.1.0`.
-
-## Product direction
-
-The workflow preserves deep pre-production strategy—Product Truth, offer and claim boundaries, consumer/JTBD/VOC/competitor reasoning, Japan localization, Amazon page architecture, message planning, complete asset planning, Page Visual System, and Evidence Mode—then shifts Stage 7.5 onward toward creative quality.
-
-Target flow:
+Normal invocation:
 
 ```text
-Stage 0–7     Strategy / Planning
-Stage 7.5–8   Creative Production
-Stage 8.4     Creative Quality
-Stage 8.6–9   Listing Simulator Bridge
-Stage 9.2     Page-context Diagnosis
-Stage 9.5     Targeted Rework
-Stage 10      Evidence Hardening + Final Acceptance
+$amazon-japan-creative-workflow
 ```
 
-The external Amazon Japan Listing Simulator is the intended page-context review surface. This workflow does not maintain a second Amazon HTML renderer.
+## Why this exists
 
-## Provenance
+High-quality Amazon creative starts before image generation. The workflow preserves deep Product Truth, offer/claim boundaries, consumer/JTBD/VOC/competitor reasoning, Japan localization, message architecture, Amazon page planning, complete asset planning, Page Visual System, and Evidence Mode, then makes creative quality the Stage 7.5+ center of gravity.
 
-See [`docs/provenance.md`](docs/provenance.md) for the exact baseline commit, release artifact, and license carry-forward.
+## Stage topology
+
+```text
+Stage 0–7     listing-strategy
+Stage 7.5–8   creative-production
+Stage 8.4     creative-quality
+Stage 8.6–9   listing-simulator-bridge
+Stage 9.2     creative-quality diagnosis
+Stage 9.5     creative-production targeted rework
+Stage 10      evidence-hardening + final acceptance
+```
+
+M0 establishes the independent Router and locks the final ownership model. The downstream baseline Skill directories are migrated into their final names in later milestones; existing baseline implementations remain available during that migration so strategy, production, evidence, and hardening behavior stays testable.
+
+## Core operating principles
+
+- Deep strategy precedes production.
+- Region is not Creative Role; template is not Creative Role.
+- One Asset job has one primary shopper task.
+- The user should see qualified candidates, not raw first attempts.
+- Asset PASS does not imply Set PASS.
+- Diagnose before rework; preserve unaffected approved assets.
+- The external Amazon Japan Listing Simulator is the only Amazon page renderer.
+- Evidence hardening remains fail-closed for final eligibility, but it is not the creative UX center.
+- No automatic merge or release.
+
+## Baseline and provenance
+
+This repository was created from the exact validated `heymio/japan-listing-demo` v0.3.3 Git tree at commit `67dbb772398af1ff67547b12bb401d96e2a588d8`. It is an independent repository, not a GitHub fork relationship, and does not track upstream automatically.
+
+See [`docs/provenance.md`](docs/provenance.md).
+
+## Current version
+
+`0.1.0`
 
 ## License
 

@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heymio/amazon-japan-creative-workflow/contracts/final-eligibility.schema.json",
+  "title": "Amazon Japan Stage 10 Final Eligibility",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "hard_verification_status",
+    "review_eligible",
+    "final_eligible",
+    "checks",
+    "blocking_conflicts",
+    "unverified_reasons"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "hard_verification_status": {"enum": ["PASS", "UNVERIFIED", "FAIL"]},
+    "review_eligible": {"type": "boolean"},
+    "final_eligible": {"type": "boolean"},
+    "checks": {
+      "type": "object",
+      "required": ["production_freeze", "exact_asset_evidence", "simulator_binding", "final_runtime"],
+      "properties": {
+        "production_freeze": {"enum": ["PASS", "UNVERIFIED", "FAIL", "N/A"]},
+        "exact_asset_evidence": {"enum": ["PASS", "UNVERIFIED", "FAIL", "N/A"]},
+        "simulator_binding": {"enum": ["PASS", "UNVERIFIED", "FAIL", "N/A"]},
+        "final_runtime": {"enum": ["PASS", "UNVERIFIED", "FAIL", "N/A"]}
+      },
+      "additionalProperties": false
+    },
+    "blocking_conflicts": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "unverified_reasons": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"hard_verification_status": {"const": "PASS"}}, "required": ["hard_verification_status"]},
+      "then": {
+        "properties": {
+          "final_eligible": {"const": true},
+          "blocking_conflicts": {"maxItems": 0},
+          "unverified_reasons": {"maxItems": 0}
+        }
+      }
+    },
+    {
+      "if": {"properties": {"final_eligible": {"const": true}}, "required": ["final_eligible"]},
+      "then": {"properties": {"hard_verification_status": {"const": "PASS"}}}
+    }
+  ],
+  "additionalProperties": false
+}

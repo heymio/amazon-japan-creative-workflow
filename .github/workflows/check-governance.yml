@@ -1,0 +1,37 @@
+name: Check Amazon Japan Creative Workflow Governance
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  governance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Fetch live branch and ruleset snapshots
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh api repos/${{ github.repository }}/branches/main > /tmp/main-branch.json
+          gh api repos/${{ github.repository }}/rulesets > /tmp/rulesets.json
+      - name: Report governance state
+        shell: bash
+        run: |
+          set +e
+          python3 scripts/check_github_governance.py /tmp/main-branch.json /tmp/rulesets.json
+          code=$?
+          if [ "$code" -eq 0 ]; then
+            exit 0
+          fi
+          echo "Governance is not yet PASS. This workflow reports state; M5.1 does not claim it can administer repository rules."
+          exit "$code"

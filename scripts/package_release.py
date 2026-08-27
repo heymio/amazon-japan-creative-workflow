@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-"""Build deterministic M5 release-candidate artifacts.
+"""Build deterministic M5.1 release-candidate artifacts from verified Git state.
 
-This script only builds local artifacts. It never creates tags, pushes commits, or
-publishes a GitHub Release.
+The builder never creates tags, pushes commits, or publishes a GitHub Release.
+The current installable multi-Skill artifact is an OpenAI Plugin bundle, not a
+single Skill ZIP with private nested Skill discovery.
 """
 
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -30,19 +30,23 @@ RUNTIME_SKILLS = [
 ]
 SUPPORT_SKILLS = ["listing-evidence-auditor"]
 LEGACY_ONLY_SKILLS = {"japan-listing-demo", "listing-hardening"}
-ONE_INSTALL_PREFIX = Path(ROUTER_SKILL)
+PLUGIN_ARTIFACT = "plugin_bundle"
+CODEX_ARTIFACT = "codex_bundle"
+PRIMARY_ARTIFACT_TYPES = {PLUGIN_ARTIFACT, CODEX_ARTIFACT}
+PLUGIN_PREFIX = Path(ROUTER_SKILL)
 RELEASE_DOCS = [
     "docs/install.md",
     "docs/provenance.md",
     "docs/simulator-integration.md",
     "docs/evidence-hardening.md",
     "docs/release.md",
-    "docs/release-notes-v0.1.0.md",
+    "docs/agent-pressure-evals.md",
 ]
 ROOT_METADATA = ["README.md", "VERSION", "LICENSE"]
 FORBIDDEN_PRIVATE_MARKERS = (b"/Users/", b"github_pat_", b"ghp_", b"AKIA")
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 SEMVER = re.compile(r"^\d+\.\d+\.\d+$")
+BROKEN_CURRENT_SHIM = "scripts/validate_project_state.py"
 
 sys.path.insert(0, str(REPO_ROOT / "scripts"))
 from package_common import collect_files, reject_symlinks, sha256_file, write_deterministic_zip  # noqa: E402
@@ -62,11 +66,39 @@ def _version() -> str:
     return value
 
 
-def _source_commit(value: str) -> str:
+def _normalize_commit(value: str) -> str:
     normalized = value.strip().casefold() if isinstance(value, str) else ""
     if not HEX40.fullmatch(normalized):
-        raise ValueError("source_commit must be a full 40-character lowercase Git SHA")
+        raise ValueError("source commit must be a full 40-character lowercase Git SHA")
     return normalized
+
+
+def _git(repo_root: Path, *args: str) -> str:
+    result = subprocess.run(
+        ["git", *args],
+        cwd=repo_root,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if result.returncode != 0:
+        detail = result.stderr.strip() or result.stdout.strip() or "git command failed"
+        raise ValueError(detail)
+    return result.stdout.strip()
+
+
+def verify_git_source(expected_commit: str | None = None, *, repo_root: Path = REPO_ROOT) -> str:
+    """Return authoritative clean HEAD, rejecting declaration/tree mismatch."""
+    repo_root = Path(repo_root)
+    head = _normalize_commit(_git(repo_root, "rev-parse", "--verify", "HEAD"))
+    if expected_commit is not None:
+        expected = _normalize_commit(expected_commit)
+        if expected != head:
+            raise ValueError(f"source commit does not match HEAD: expected {expected}, HEAD {head}")
+    dirty = _git(repo_root, "status", "--porcelain", "--untracked-files=no")
+    if dirty:
+        raise ValueError("release source Git tree is dirty; commit or revert tracked changes before packaging")
+    return head
 
 
 def _exclude_runtime(relative: Path) -> bool:
@@ -75,6 +107,12 @@ def _exclude_runtime(relative: Path) -> bool:
     if "evals" in relative.parts or "__pycache__" in relative.parts:
         return True
     return relative.suffix == ".pyc"
+
+
+def _exclude_current_skill_member(skill: str, relative: Path) -> bool:
+    if _exclude_runtime(relative):
+        return True
+    return skill == ROUTER_SKILL and relative.as_posix() == BROKEN_CURRENT_SHIM
 
 
 def _scan_release_bytes(name: str, data: bytes) -> None:
@@ -88,7 +126,8 @@ def _scan_release_bytes(name: str, data: bytes) -> None:
             raise ValueError(f"private/sensitive marker found in release member: {name}")
 
 
-def _patched_embedded_bytes(skill: str, relative: Path, data: bytes) -> bytes:
+def _patched_plugin_bytes(skill: str, relative: Path, data: bytes) -> bytes:
+    """Patch only packaged Plugin copies for plugin-root shared dependencies."""
     text: str | None = None
     if skill == "listing-simulator-bridge" and relative.as_posix() == "scripts/build_import_pack.py":
         text = data.decode("utf-8")
@@ -96,17 +135,17 @@ def _patched_embedded_bytes(skill: str, relative: Path, data: bytes) -> bytes:
 ROOT = HERE.parents[3]
 sys.path.insert(0, str(ROOT / "scripts"))'''
         new = '''HERE = Path(__file__).resolve().parent
-EMBEDDED_MAIN_SKILL = HERE.parents[2]
-sys.path.insert(0, str(EMBEDDED_MAIN_SKILL / "runtime-scripts"))'''
+PLUGIN_ROOT = HERE.parents[2]
+sys.path.insert(0, str(PLUGIN_ROOT / "runtime-scripts"))'''
         if old not in text:
-            raise ValueError("Simulator Bridge package_common path block changed; update one-install patch")
+            raise ValueError("Simulator Bridge package_common path block changed; update Plugin patch")
         text = text.replace(old, new)
     elif skill == "listing-simulator-bridge" and relative.as_posix() == "scripts/validate_contract.py":
         text = data.decode("utf-8")
         old = 'ROOT = Path(__file__).resolve().parents[4]'
         new = 'ROOT = Path(__file__).resolve().parents[3]'
         if old not in text:
-            raise ValueError("Simulator Bridge taxonomy path block changed; update one-install patch")
+            raise ValueError("Simulator Bridge taxonomy path block changed; update Plugin patch")
         text = text.replace(old, new)
     return text.encode("utf-8") if text is not None else data
 
@@ -116,20 +155,32 @@ def _add_file(entries: list[tuple[str, bytes]], name: str, data: bytes) -> None:
     entries.append((name, data))
 
 
-def _add_tree(
+def _add_skill_tree(
     entries: list[tuple[str, bytes]],
-    source_root: Path,
+    skill: str,
     target_root: Path,
     *,
-    embedded_skill: str | None = None,
+    plugin_mode: bool,
 ) -> None:
+    source_root = SKILLS_ROOT / skill
+    if not (source_root / "SKILL.md").is_file():
+        raise ValueError(f"missing runtime Skill source: {skill}")
+    reject_symlinks(source_root)
+    for path in collect_files(source_root):
+        relative = path.relative_to(source_root)
+        if _exclude_current_skill_member(skill, relative):
+            continue
+        data = path.read_bytes()
+        if plugin_mode:
+            data = _patched_plugin_bytes(skill, relative, data)
+        _add_file(entries, (target_root / relative).as_posix(), data)
+
+
+def _add_tree(entries: list[tuple[str, bytes]], source_root: Path, target_root: Path) -> None:
     reject_symlinks(source_root)
     for path in collect_files(source_root, exclude=_exclude_runtime):
         relative = path.relative_to(source_root)
-        data = path.read_bytes()
-        if embedded_skill:
-            data = _patched_embedded_bytes(embedded_skill, relative, data)
-        _add_file(entries, (target_root / relative).as_posix(), data)
+        _add_file(entries, (target_root / relative).as_posix(), path.read_bytes())
 
 
 def _build_info(artifact_type: str, version: str, source_commit: str) -> bytes:
@@ -145,58 +196,56 @@ def _build_info(artifact_type: str, version: str, source_commit: str) -> bytes:
     })
 
 
-def _one_install_entries(version: str, source_commit: str) -> list[tuple[str, bytes]]:
+def _plugin_manifest(version: str) -> bytes:
+    return _canonical_json({
+        "name": ROUTER_SKILL,
+        "version": version,
+        "description": "Quality-first Amazon Japan listing strategy and creative workflow",
+        "repository": "https://github.com/heymio/amazon-japan-creative-workflow",
+        "license": "MIT",
+        "skills": "./skills/",
+        "interface": {
+            "displayName": "Amazon Japan Creative Workflow",
+            "shortDescription": "Japan-localized Amazon listing strategy and creative workflow"
+        },
+    })
+
+
+def _plugin_entries(version: str, source_commit: str) -> list[tuple[str, bytes]]:
     entries: list[tuple[str, bytes]] = []
-    router_root = SKILLS_ROOT / ROUTER_SKILL
-    _add_tree(entries, router_root, ONE_INSTALL_PREFIX)
-
-    for skill in [name for name in RUNTIME_SKILLS if name != ROUTER_SKILL] + SUPPORT_SKILLS:
-        source_root = SKILLS_ROOT / skill
-        if not (source_root / "SKILL.md").is_file():
-            raise ValueError(f"missing runtime Skill source: {skill}")
-        _add_tree(
-            entries,
-            source_root,
-            ONE_INSTALL_PREFIX / "internal-skills" / skill,
-            embedded_skill=skill,
-        )
-
-    _add_tree(entries, REPO_ROOT / "contracts", ONE_INSTALL_PREFIX / "contracts")
-    _add_tree(entries, REPO_ROOT / "profiles", ONE_INSTALL_PREFIX / "profiles")
-
-    package_common = (REPO_ROOT / "scripts" / "package_common.py").read_bytes()
-    _add_file(entries, (ONE_INSTALL_PREFIX / "runtime-scripts" / "package_common.py").as_posix(), package_common)
-
+    _add_file(entries, (PLUGIN_PREFIX / ".codex-plugin" / "plugin.json").as_posix(), _plugin_manifest(version))
+    for skill in RUNTIME_SKILLS + SUPPORT_SKILLS:
+        _add_skill_tree(entries, skill, PLUGIN_PREFIX / "skills" / skill, plugin_mode=True)
+    _add_tree(entries, REPO_ROOT / "contracts", PLUGIN_PREFIX / "contracts")
+    _add_tree(entries, REPO_ROOT / "profiles", PLUGIN_PREFIX / "profiles")
+    _add_file(
+        entries,
+        (PLUGIN_PREFIX / "runtime-scripts" / "package_common.py").as_posix(),
+        (REPO_ROOT / "scripts" / "package_common.py").read_bytes(),
+    )
     for relative in ROOT_METADATA + RELEASE_DOCS:
         source = REPO_ROOT / relative
         if not source.is_file() or source.is_symlink():
             raise ValueError(f"missing/unsafe release metadata: {relative}")
-        target = ONE_INSTALL_PREFIX / (Path(relative).name if relative in ROOT_METADATA else relative)
+        target = PLUGIN_PREFIX / (Path(relative).name if relative in ROOT_METADATA else relative)
         _add_file(entries, target.as_posix(), source.read_bytes())
-
-    _add_file(entries, (ONE_INSTALL_PREFIX / "BUILD_INFO.json").as_posix(), _build_info("one_install_skill", version, source_commit))
+    _add_file(entries, (PLUGIN_PREFIX / "BUILD_INFO.json").as_posix(), _build_info(PLUGIN_ARTIFACT, version, source_commit))
     return entries
 
 
 def _codex_bundle_entries(version: str, source_commit: str) -> list[tuple[str, bytes]]:
     entries: list[tuple[str, bytes]] = []
     for skill in RUNTIME_SKILLS + SUPPORT_SKILLS:
-        source_root = SKILLS_ROOT / skill
-        if not (source_root / "SKILL.md").is_file():
-            raise ValueError(f"missing runtime Skill source: {skill}")
-        _add_tree(entries, source_root, Path(".agents") / "skills" / skill)
-
+        _add_skill_tree(entries, skill, Path(".agents") / "skills" / skill, plugin_mode=False)
     _add_tree(entries, REPO_ROOT / "contracts", Path("contracts"))
     _add_tree(entries, REPO_ROOT / "profiles", Path("profiles"))
-
     for relative in ROOT_METADATA + RELEASE_DOCS:
         source = REPO_ROOT / relative
         if not source.is_file() or source.is_symlink():
             raise ValueError(f"missing/unsafe release metadata: {relative}")
         _add_file(entries, Path(relative).as_posix(), source.read_bytes())
-
     _add_file(entries, "scripts/package_common.py", (REPO_ROOT / "scripts" / "package_common.py").read_bytes())
-    _add_file(entries, "BUILD_INFO.json", _build_info("codex_bundle", version, source_commit))
+    _add_file(entries, "BUILD_INFO.json", _build_info(CODEX_ARTIFACT, version, source_commit))
     return entries
 
 
@@ -211,37 +260,36 @@ def _artifact_row(path: Path) -> dict[str, object]:
     }
 
 
-def build_release(output_dir: Path, source_commit: str) -> dict[str, object]:
-    """Build both deterministic archives plus external manifest/checksums."""
+def build_release(output_dir: Path, source_commit: str | None = None) -> dict[str, object]:
+    """Build deterministic Plugin/Codex archives from a verified clean Git HEAD."""
     version = _version()
-    source_commit = _source_commit(source_commit)
+    authoritative_commit = verify_git_source(source_commit)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    one_install = output_dir / f"{ROUTER_SKILL}-{version}.skill.zip"
+    plugin = output_dir / f"{ROUTER_SKILL}-{version}-plugin.zip"
     codex_bundle = output_dir / f"{ROUTER_SKILL}-{version}-codex-bundle.zip"
-    write_deterministic_zip(one_install, _one_install_entries(version, source_commit))
-    write_deterministic_zip(codex_bundle, _codex_bundle_entries(version, source_commit))
+    write_deterministic_zip(plugin, _plugin_entries(version, authoritative_commit))
+    write_deterministic_zip(codex_bundle, _codex_bundle_entries(version, authoritative_commit))
 
     manifest: dict[str, object] = {
         "schema_version": "1.0",
         "distribution": ROUTER_SKILL,
         "version": version,
-        "source_commit": source_commit,
+        "source_commit": authoritative_commit,
         "normal_invocation": "$amazon-japan-creative-workflow",
         "runtime_skills": sorted(RUNTIME_SKILLS),
         "support_skills": sorted(SUPPORT_SKILLS),
         "legacy_compatibility": sorted(LEGACY_ONLY_SKILLS),
         "publication": {"automatic": False, "github_release_created": False},
         "artifacts": {
-            "one_install_skill": _artifact_row(one_install),
-            "codex_bundle": _artifact_row(codex_bundle),
+            PLUGIN_ARTIFACT: _artifact_row(plugin),
+            CODEX_ARTIFACT: _artifact_row(codex_bundle),
         },
     }
 
     manifest_path = output_dir / f"{ROUTER_SKILL}-{version}-release-manifest.json"
     manifest_path.write_bytes(_canonical_json(manifest))
-
     checksum_lines = []
     for row in manifest["artifacts"].values():  # type: ignore[union-attr]
         checksum_lines.append(f"{row['sha256']}  {row['filename']}")  # type: ignore[index]
@@ -252,18 +300,8 @@ def build_release(output_dir: Path, source_commit: str) -> dict[str, object]:
 
 def _default_source_commit() -> str:
     github_sha = os.environ.get("GITHUB_SHA", "").strip().casefold()
-    if HEX40.fullmatch(github_sha):
-        return github_sha
-    result = subprocess.run(
-        ["git", "rev-parse", "HEAD"],
-        cwd=REPO_ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
-    if result.returncode != 0:
-        raise ValueError("cannot resolve source commit; pass --source-commit")
-    return _source_commit(result.stdout.strip())
+    expected = github_sha if HEX40.fullmatch(github_sha) else None
+    return verify_git_source(expected)
 
 
 def main() -> int:
@@ -271,8 +309,7 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, default=REPO_ROOT / "dist")
     parser.add_argument("--source-commit", default=None)
     args = parser.parse_args()
-    source_commit = _source_commit(args.source_commit) if args.source_commit else _default_source_commit()
-    manifest = build_release(args.output_dir, source_commit)
+    manifest = build_release(args.output_dir, args.source_commit)
     print(json.dumps(manifest, ensure_ascii=False, indent=2, sort_keys=True))
     return 0
 

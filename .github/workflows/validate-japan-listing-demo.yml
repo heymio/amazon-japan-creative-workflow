@@ -1,4 +1,4 @@
-name: Validate Amazon Japan Creative Workflow M2
+name: Validate Amazon Japan Creative Workflow M3
 
 on:
   push:
@@ -29,6 +29,10 @@ jobs:
       - run: python3 .agents/skills/creative-quality/scripts/selftest_asset_quality.py
       - run: python3 .agents/skills/creative-quality/scripts/selftest_set_quality.py
       - run: python3 .agents/skills/creative-quality/scripts/selftest_diagnosis.py
+      - run: python3 .agents/skills/listing-simulator-bridge/scripts/selftest_contract.py
+      - run: python3 .agents/skills/listing-simulator-bridge/scripts/selftest_variations.py
+      - run: python3 .agents/skills/listing-simulator-bridge/scripts/selftest_import_pack.py
+      - run: python3 .agents/skills/listing-simulator-bridge/scripts/selftest_pack_security.py
       - run: python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
       - run: python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
       - name: Parse machine-readable contracts and fixtures
@@ -41,8 +45,22 @@ jobs:
               "contracts/strategy-output.schema.json",
               "contracts/creative-quality.schema.json",
               "contracts/set-quality.schema.json",
+              "contracts/asset-binding.schema.json",
+              "contracts/simulator-manifest.schema.json",
+              "profiles/amazon-jp/slot-taxonomy.json",
+              ".agents/skills/listing-simulator-bridge/templates/template-registry.synthetic.json",
               "fixtures/adversarial/manifest.json",
           ]:
               json.loads(Path(path).read_text(encoding="utf-8"))
-          print("PASS: M2 JSON contracts parse")
+          print("PASS: M3 JSON contracts parse")
           PY
+      - name: Verify deterministic Simulator ZIP and validation
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 .agents/skills/listing-simulator-bridge/scripts/build_import_pack.py fixtures/simulator-import/parent-only /tmp/pack-a.zip
+          python3 .agents/skills/listing-simulator-bridge/scripts/build_import_pack.py fixtures/simulator-import/parent-only /tmp/pack-b.zip
+          A="$(sha256sum /tmp/pack-a.zip | awk '{print $1}')"
+          B="$(sha256sum /tmp/pack-b.zip | awk '{print $1}')"
+          test "$A" = "$B"
+          python3 .agents/skills/listing-simulator-bridge/scripts/validate_import_pack.py /tmp/pack-a.zip

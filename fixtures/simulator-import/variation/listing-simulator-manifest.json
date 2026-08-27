@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "project": {
+    "market": "JP",
+    "channel": "amazon-jp",
+    "locale": "ja-JP",
+    "product_id": "synthetic-example"
+  },
+  "contents": [],
+  "active_selection": {
+    "enhanced_description_id": null,
+    "brand_content_id": null
+  },
+  "bindings": [
+    {
+      "asset_id": "G1",
+      "slot_id": "gallery-1",
+      "output_ref": "outputs/gallery/g1.png",
+      "variation_id": null
+    },
+    {
+      "asset_id": "G1-BLACK",
+      "slot_id": "gallery-1",
+      "output_ref": "outputs/gallery/g1-black.png",
+      "variation_id": "black"
+    }
+  ],
+  "listing_family": {
+    "parent": {
+      "listing_id": "parent",
+      "gallery": {
+        "gallery-1": "G1"
+      },
+      "offer": {
+        "price": "12980",
+        "stock": "in-stock"
+      }
+    },
+    "variations": [
+      {
+        "variation_id": "black",
+        "gallery": {
+          "gallery-1": "G1-BLACK"
+        },
+        "offer": {
+          "price": "13980"
+        }
+      }
+    ]
+  },
+  "pending_assets": [],
+  "eligibility": {
+    "production_freeze_ready": true,
+    "required_asset_set_complete": true,
+    "approved_output_matches": true,
+    "asset_binding_complete": true,
+    "blocking_conflicts": [],
+    "hard_verification_status": "UNVERIFIED"
+  }
+}

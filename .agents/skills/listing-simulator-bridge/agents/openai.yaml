@@ -1,0 +1,4 @@
+interface:
+  display_name: "Amazon Japan Listing Simulator Bridge"
+  short_description: "Explicit bindings and deterministic Simulator import contracts"
+  default_prompt: "Build or validate the current Amazon Japan Listing Simulator import contract from approved workflow assets. Keep bindings explicit, preserve Variation inheritance, and serialize unknown relationships as Pending instead of guessing."

@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0",
+  "bindings": [
+    {
+      "asset_id": "G1",
+      "slot_id": "gallery-1",
+      "output_ref": "outputs/gallery/g1.png",
+      "variation_id": null
+    }
+  ]
+}

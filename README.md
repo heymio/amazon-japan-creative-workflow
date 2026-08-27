@@ -24,7 +24,7 @@ Stage 9.5     creative-production targeted rework
 Stage 10      evidence-hardening + final acceptance
 ```
 
-M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strategy`; M2 adds `creative-production` and `creative-quality` with Creative Brief readiness, provider-agnostic Production Modes, bounded targeted retries, Selection Lock, anchor-first waves, Asset QA, Set QA, and page-context diagnosis. Simulator interoperability and final evidence extraction remain later milestones.
+M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strategy`; M2 added `creative-production` and `creative-quality`; M3 adds `listing-simulator-bridge` with explicit bindings, Parent/Variation inheritance, Pending-without-guessing behavior, deterministic folder/ZIP import packs, and pack security. Final evidence extraction remains a later milestone.
 
 ## Core operating principles
 
@@ -37,6 +37,14 @@ M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strat
 - The external Amazon Japan Listing Simulator is the only Amazon page renderer.
 - Evidence hardening remains fail-closed for final eligibility, but it is not the creative UX center.
 - No automatic merge or release.
+
+## Simulator interoperability
+
+M3 exports explicit `asset-slot-contract.json` and derived `listing-simulator-manifest.json` contracts for the external Amazon Japan Listing Simulator. Stable Gallery/detail slots are workflow-owned; A+/Brand Story/Shoppable template IDs are registry-owned. Unbound media becomes Pending rather than being guessed from filenames.
+
+Folder and ZIP packs are deterministic and reject path traversal, absolute/local paths, symlinks, `.env` files, executable JavaScript, duplicate normalized ZIP members, oversized entries, and suspicious compression ratios. The included template registry is **synthetic contract-test data only**; real 43-template registry compatibility is a later real-simulator gate.
+
+See [`docs/simulator-integration.md`](docs/simulator-integration.md).
 
 ## Baseline and provenance
 

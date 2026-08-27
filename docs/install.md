@@ -10,17 +10,18 @@ Invoke only:
 $amazon-japan-creative-workflow
 ```
 
-Current M2 runtime areas:
+Current M3 runtime areas:
 
 ```text
 Stage 0–7       → listing-strategy
 Stage 7.5–8     → creative-production
 Stage 8.4       → creative-quality
+Stage 8.6–9     → listing-simulator-bridge
 Stage 9.2       → creative-quality diagnosis
 Stage 9.5       → creative-production targeted rework
 ```
 
-`listing-simulator-bridge` arrives in M3. The imported `listing-hardening` / `listing-evidence-auditor` baseline remains in place until M4 extracts the final `evidence-hardening` Skill. Do not treat the imported v0.3.3 Demo renderer as the new product architecture; the external Amazon Japan Listing Simulator is the only intended page renderer.
+`listing-simulator-bridge` is available in M3. The imported `listing-hardening` / `listing-evidence-auditor` baseline remains in place until M4 extracts the final `evidence-hardening` Skill. Do not treat the imported v0.3.3 Demo renderer as the new product architecture; the external Amazon Japan Listing Simulator is the only intended page renderer.
 
 ## Stage 0–7 strategy
 
@@ -46,6 +47,12 @@ Creative approval is not evidence verification.
 
 Deterministic CI does **not** inspect pixels and claim subjective aesthetics are proven. Semantic scores/observations come from a visual/model evaluator or human review. Final creative acceptance remains human.
 
+## Simulator bridge
+
+`listing-simulator-bridge` validates explicit Asset/Slot/Variation/content bindings, resolves Parent→Variation overrides by semantic keys, and builds deterministic folder or ZIP import packs for the external Amazon Japan Listing Simulator. Unknown media relationships become Pending; filenames are never used to guess slots or variations.
+
+The synthetic registry under the Bridge templates is only for contract tests. Do not treat its IDs as the real Simulator 43-template registry.
+
 ## Current validation
 
 Run:
@@ -61,6 +68,10 @@ python3 .agents/skills/creative-production/scripts/selftest_creative_state.py
 python3 .agents/skills/creative-quality/scripts/selftest_asset_quality.py
 python3 .agents/skills/creative-quality/scripts/selftest_set_quality.py
 python3 .agents/skills/creative-quality/scripts/selftest_diagnosis.py
+python3 .agents/skills/listing-simulator-bridge/scripts/selftest_contract.py
+python3 .agents/skills/listing-simulator-bridge/scripts/selftest_variations.py
+python3 .agents/skills/listing-simulator-bridge/scripts/selftest_import_pack.py
+python3 .agents/skills/listing-simulator-bridge/scripts/selftest_pack_security.py
 python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
 python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
 ```

@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/heymio/amazon-japan-creative-workflow/contracts/release-manifest.schema.json",
+  "title": "Amazon Japan Creative Workflow Release Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "distribution",
+    "version",
+    "source_commit",
+    "normal_invocation",
+    "runtime_skills",
+    "support_skills",
+    "legacy_compatibility",
+    "publication",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "distribution": {"const": "amazon-japan-creative-workflow"},
+    "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "source_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "normal_invocation": {"const": "$amazon-japan-creative-workflow"},
+    "runtime_skills": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true,
+      "minItems": 6
+    },
+    "support_skills": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "legacy_compatibility": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "publication": {
+      "type": "object",
+      "required": ["automatic", "github_release_created"],
+      "properties": {
+        "automatic": {"const": false},
+        "github_release_created": {"const": false}
+      },
+      "additionalProperties": false
+    },
+    "artifacts": {
+      "type": "object",
+      "required": ["one_install_skill", "codex_bundle"],
+      "properties": {
+        "one_install_skill": {"$ref": "#/$defs/artifact"},
+        "codex_bundle": {"$ref": "#/$defs/artifact"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "artifact": {
+      "type": "object",
+      "required": ["filename", "sha256", "bytes", "member_count"],
+      "properties": {
+        "filename": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "bytes": {"type": "integer", "minimum": 1},
+        "member_count": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

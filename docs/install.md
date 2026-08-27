@@ -1,6 +1,6 @@
-# Amazon Japan Creative Workflow — development install/use
+# Amazon Japan Creative Workflow — install/use
 
-This repository is currently at development version `0.1.0`. The stable packaged distribution and release workflow are rebuilt in M5; until then, use the repository checkout directly rather than the imported v0.3.3 packaging scripts.
+Current version: `0.1.0`.
 
 ## User-facing entry
 
@@ -10,7 +10,7 @@ Invoke only:
 $amazon-japan-creative-workflow
 ```
 
-Current M4 runtime areas:
+Current runtime areas:
 
 ```text
 Stage 0–7       → listing-strategy
@@ -22,7 +22,46 @@ Stage 9.5       → creative-production targeted rework
 Stage 10        → evidence-hardening
 ```
 
-The imported `listing-hardening` remains available only for v0.3.3 Delivery State / legacy Demo compatibility and regression coverage. New projects use `listing-simulator-bridge` as the page-integration layer and `evidence-hardening` as the Final eligibility layer. The external Amazon Japan Listing Simulator is the only intended page renderer.
+`listing-evidence-auditor` is a support Skill used for independent exact-file evidence. It is not a separate user-facing workflow.
+
+The imported `listing-hardening` remains available in the repository only for v0.3.3 Delivery State / legacy Demo compatibility and regression coverage. New projects use `listing-simulator-bridge` as the page-integration layer and `evidence-hardening` as the Final eligibility layer. The external Amazon Japan Listing Simulator is the only intended page renderer.
+
+## Installation options
+
+### One-install Skill ZIP
+
+Build or obtain:
+
+```text
+amazon-japan-creative-workflow-0.1.0.skill.zip
+```
+
+It contains one root Skill, `amazon-japan-creative-workflow`, with current runtime/support Skills embedded internally. Use this form where a single installed workflow entry is preferred.
+
+### Codex project bundle
+
+Build or obtain:
+
+```text
+amazon-japan-creative-workflow-0.1.0-codex-bundle.zip
+```
+
+Extract it at the project root so the `.agents/skills/` structure is preserved. This form is intended for repository-level use and source review.
+
+Both artifacts carry `BUILD_INFO.json` with exact version/source-commit metadata. Validate physical artifacts against the external release manifest and `SHA256SUMS`.
+
+## Build a release candidate
+
+From the exact source commit:
+
+```bash
+python3 scripts/package_release.py \
+  --source-commit <40-character-git-sha> \
+  --output-dir dist
+python3 scripts/validate_release.py dist
+```
+
+See `docs/release.md` for the publication boundary. Building a release candidate does not create a GitHub Release or tag.
 
 ## Stage 0–7 strategy
 
@@ -38,15 +77,7 @@ Creative approval is not evidence verification.
 
 ## Creative quality
 
-`creative-quality` applies:
-
-- Hard Blocker precedence;
-- nine-dimension, 100-point diagnostic scoring;
-- role-specific minimums;
-- deterministic Set QA for structured labels/IDs;
-- exact page-context diagnosis families.
-
-Deterministic CI does **not** inspect pixels and claim subjective aesthetics are proven. Semantic scores/observations come from a visual/model evaluator or human review. Final creative acceptance remains human.
+`creative-quality` applies Hard Blocker precedence, role-specific thresholds, whole-set QA, and page-context diagnosis. Deterministic CI does not claim subjective pixel aesthetics are proven; semantic visual judgment remains model/human evaluation.
 
 ## Simulator bridge
 
@@ -56,14 +87,7 @@ The synthetic registry under the Bridge templates is only for contract tests. Do
 
 ## Evidence hardening
 
-`evidence-hardening` recomputes Stage 10 Final eligibility from:
-
-- Production Freeze exact required-set / approved-output state;
-- `listing-evidence-auditor` physical SHA-256 + semantic evidence;
-- Simulator binding parity and Pending/conflict state;
-- exact standalone HTML SHA-256 + browser-runtime evidence.
-
-Final requires `PASS` for Production Freeze, exact asset evidence, Simulator binding, and final runtime. Missing independent/semantic/runtime evidence returns `UNVERIFIED`; deterministic contradictions return `FAIL`. Caller-authored `PASS` fields are never authoritative.
+`evidence-hardening` recomputes Stage 10 Final eligibility from Production Freeze, `listing-evidence-auditor`, Simulator binding parity, and exact standalone HTML browser-runtime evidence. Missing independent/semantic/runtime evidence returns `UNVERIFIED`; deterministic contradictions return `FAIL`. Caller-authored `PASS` fields are never authoritative.
 
 ## Current validation
 
@@ -87,6 +111,7 @@ python3 .agents/skills/listing-simulator-bridge/scripts/selftest_pack_security.p
 python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
 python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
 python3 .agents/skills/evidence-hardening/scripts/selftest_final_eligibility.py
+python3 scripts/selftest_release_packaging.py
 ```
 
-The old v0.3.3 `package_skill.py`, `package_codex_bundle.py`, overlay validation, and embedded Demo distribution remain compatibility/history code until M5 and are not the current development distribution contract.
+The old v0.3.3 `package_skill.py`, old `scripts/package_codex_bundle.py`, overlay validation, and embedded legacy Demo distribution remain compatibility/history code and are not the current M5 release contract.

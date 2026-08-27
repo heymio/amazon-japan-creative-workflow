@@ -1,6 +1,6 @@
 # Amazon Japan Creative Workflow
 
-`amazon-japan-creative-workflow` is an independent, quality-first workflow for Amazon Japan listing strategy, creative production, creative QA, simulator interoperability, and final evidence safeguards.
+`amazon-japan-creative-workflow` is an independent, quality-first workflow for Amazon Japan listing strategy, creative production, creative QA, simulator interoperability, final evidence safeguards, and deterministic distribution.
 
 Normal invocation:
 
@@ -24,7 +24,7 @@ Stage 9.5     creative-production targeted rework
 Stage 10      evidence-hardening + final acceptance
 ```
 
-M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strategy`; M2 added `creative-production` and `creative-quality`; M3 added `listing-simulator-bridge`; M4 adds `evidence-hardening` as the fail-closed Stage 10 Final eligibility layer. Packaging/release redesign remains a later milestone.
+M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strategy`; M2 added `creative-production` and `creative-quality`; M3 added `listing-simulator-bridge`; M4 added fail-closed `evidence-hardening`; M5 defines the deterministic packaging and release-candidate contract.
 
 ## Core operating principles
 
@@ -37,7 +37,7 @@ M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strat
 - The external Amazon Japan Listing Simulator is the only Amazon page renderer.
 - Evidence hardening remains fail-closed for Final eligibility, but it is not the creative UX center.
 - Caller-authored `PASS` flags never substitute for recomputed exact-output evidence.
-- No automatic merge or release.
+- Build artifacts may be automated; merge, tag, and GitHub Release publication are not automatic.
 
 ## Simulator interoperability
 
@@ -61,6 +61,23 @@ The result is `PASS`, `UNVERIFIED`, or `FAIL`. Only `PASS` can set `final_eligib
 Legacy `listing-hardening` remains for v0.3.3 Delivery State compatibility and regression coverage; current Stage 10 routing uses `evidence-hardening`.
 
 See [`docs/evidence-hardening.md`](docs/evidence-hardening.md).
+
+## Packaging and release candidates
+
+M5 has two primary artifacts:
+
+```text
+amazon-japan-creative-workflow-<version>.skill.zip
+amazon-japan-creative-workflow-<version>-codex-bundle.zip
+```
+
+The one-install archive presents one workflow root and embeds the current routed/support Skills. The Codex bundle preserves `.agents/skills/...` for project-level installation and review.
+
+Both artifacts are deterministic, contain `BUILD_INFO.json`, and are bound to an external release manifest plus `SHA256SUMS`. `scripts/validate_release.py` independently recomputes the physical release contract.
+
+Legacy `japan-listing-demo` and `listing-hardening` source remains in this repository for compatibility but is not shipped in the current default M5 release artifacts.
+
+M5 does not automatically create Git tags or GitHub Releases. See [`docs/release.md`](docs/release.md) and [`docs/install.md`](docs/install.md).
 
 ## Baseline and provenance
 

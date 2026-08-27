@@ -1,0 +1,53 @@
+name: Build Amazon Japan Creative Workflow Release Candidate
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build-release-candidate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install validation dependency
+        run: python3 -m pip install --disable-pip-version-check --no-input Pillow
+      - name: Run current workflow validation
+        run: |
+          set -euo pipefail
+          python3 scripts/selftest_provenance.py
+          python3 .agents/skills/amazon-japan-creative-workflow/scripts/selftest_router.py
+          python3 .agents/skills/listing-strategy/scripts/selftest_strategy.py
+          python3 .agents/skills/listing-strategy/scripts/selftest_strategy_v010.py
+          python3 .agents/skills/creative-production/scripts/selftest_creative_brief.py
+          python3 .agents/skills/creative-production/scripts/selftest_production.py
+          python3 .agents/skills/creative-production/scripts/selftest_creative_state.py
+          python3 .agents/skills/creative-quality/scripts/selftest_asset_quality.py
+          python3 .agents/skills/creative-quality/scripts/selftest_set_quality.py
+          python3 .agents/skills/creative-quality/scripts/selftest_diagnosis.py
+          python3 .agents/skills/listing-simulator-bridge/scripts/selftest_contract.py
+          python3 .agents/skills/listing-simulator-bridge/scripts/selftest_variations.py
+          python3 .agents/skills/listing-simulator-bridge/scripts/selftest_import_pack.py
+          python3 .agents/skills/listing-simulator-bridge/scripts/selftest_pack_security.py
+          python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
+          python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
+          python3 .agents/skills/evidence-hardening/scripts/selftest_final_eligibility.py
+          python3 scripts/selftest_release_packaging.py
+      - name: Build deterministic release candidate
+        run: |
+          set -euo pipefail
+          python3 scripts/package_release.py --source-commit "$GITHUB_SHA" --output-dir dist
+          python3 scripts/validate_release.py dist
+      - name: Upload release candidate for review
+        uses: actions/upload-artifact@v4
+        with:
+          name: amazon-japan-creative-workflow-${{ github.sha }}-release-candidate
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14

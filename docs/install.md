@@ -10,7 +10,7 @@ Invoke only:
 $amazon-japan-creative-workflow
 ```
 
-Current M3 runtime areas:
+Current M4 runtime areas:
 
 ```text
 Stage 0–7       → listing-strategy
@@ -19,9 +19,10 @@ Stage 8.4       → creative-quality
 Stage 8.6–9     → listing-simulator-bridge
 Stage 9.2       → creative-quality diagnosis
 Stage 9.5       → creative-production targeted rework
+Stage 10        → evidence-hardening
 ```
 
-`listing-simulator-bridge` is available in M3. The imported `listing-hardening` / `listing-evidence-auditor` baseline remains in place until M4 extracts the final `evidence-hardening` Skill. Do not treat the imported v0.3.3 Demo renderer as the new product architecture; the external Amazon Japan Listing Simulator is the only intended page renderer.
+The imported `listing-hardening` remains available only for v0.3.3 Delivery State / legacy Demo compatibility and regression coverage. New projects use `listing-simulator-bridge` as the page-integration layer and `evidence-hardening` as the Final eligibility layer. The external Amazon Japan Listing Simulator is the only intended page renderer.
 
 ## Stage 0–7 strategy
 
@@ -53,6 +54,17 @@ Deterministic CI does **not** inspect pixels and claim subjective aesthetics are
 
 The synthetic registry under the Bridge templates is only for contract tests. Do not treat its IDs as the real Simulator 43-template registry.
 
+## Evidence hardening
+
+`evidence-hardening` recomputes Stage 10 Final eligibility from:
+
+- Production Freeze exact required-set / approved-output state;
+- `listing-evidence-auditor` physical SHA-256 + semantic evidence;
+- Simulator binding parity and Pending/conflict state;
+- exact standalone HTML SHA-256 + browser-runtime evidence.
+
+Final requires `PASS` for Production Freeze, exact asset evidence, Simulator binding, and final runtime. Missing independent/semantic/runtime evidence returns `UNVERIFIED`; deterministic contradictions return `FAIL`. Caller-authored `PASS` fields are never authoritative.
+
 ## Current validation
 
 Run:
@@ -74,6 +86,7 @@ python3 .agents/skills/listing-simulator-bridge/scripts/selftest_import_pack.py
 python3 .agents/skills/listing-simulator-bridge/scripts/selftest_pack_security.py
 python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
 python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
+python3 .agents/skills/evidence-hardening/scripts/selftest_final_eligibility.py
 ```
 
 The old v0.3.3 `package_skill.py`, `package_codex_bundle.py`, overlay validation, and embedded Demo distribution remain compatibility/history code until M5 and are not the current development distribution contract.

@@ -1,6 +1,7 @@
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.parents[2]
 EXPECTED = {
     "stage-4": "listing-strategy",
     "stage-7": "listing-strategy",
@@ -25,10 +26,11 @@ def main() -> int:
     manifest = (ROOT / "core" / "manifest.yaml").read_text(encoding="utf-8")
     routing = (ROOT / "references" / "routing.md").read_text(encoding="utf-8")
     agent = (ROOT / "agents" / "openai.yaml").read_text(encoding="utf-8")
+    version = (REPO_ROOT / "VERSION").read_text(encoding="utf-8").strip()
 
     require(skill, "name: amazon-japan-creative-workflow", "skill identity")
     require(skill, "$amazon-japan-creative-workflow", "normal invocation")
-    require(manifest, "distribution_version: 0.1.0", "manifest version")
+    require(manifest, f"distribution_version: {version}", "manifest version")
     require(manifest, "repository: heymio/japan-listing-demo", "baseline repository")
     require(manifest, "version: v0.3.3", "baseline version")
     require(manifest, "commit: 67dbb772398af1ff67547b12bb401d96e2a588d8", "baseline commit")

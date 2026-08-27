@@ -1,17 +1,23 @@
 ---
 name: listing-hardening
-description: Use when hardening Stage 8.5–10 final listing assets, assembling the verified channel demo, and running delivery QA.
+description: Legacy v0.3.3 compatibility Skill for Delivery State hardening, Demo validation, and regression coverage.
 ---
 
 # Listing Hardening
 
+## Compatibility status
+
+Current workflow routing does **not** use this Skill as the Stage 10 owner. New projects route Stage 8.6–9 to `listing-simulator-bridge` and Stage 10 to `evidence-hardening`.
+
+`listing-hardening` remains for v0.3.3 Delivery State 0.1/0.2 compatibility, legacy Demo validation, and regression coverage. Existing projects may continue to use its established contracts without migration.
+
 ## Core question
 
-Are the final artifacts exact, safe, channel-correct, and ready to assemble/deliver?
+Are the final artifacts exact, safe, channel-correct, and ready to assemble/deliver under the legacy Delivery State contract?
 
-## Plane boundary
+## Legacy plane boundary
 
-This Skill owns Stage 8.5, Stage 9, and Stage 10 only. It does not own upstream strategy, market-research, or creative-brief design.
+This compatibility Skill covers the former Stage 8.5, Stage 9, and Stage 10 hardening path only. It does not own upstream strategy, market-research, or creative-brief design.
 
 ## Inputs
 
@@ -33,7 +39,7 @@ Planning may request a **targeted early audit** only for an inherited or previou
 
 ## Hardening responsibilities
 
-Own:
+Legacy ownership includes:
 
 - physical file identity and fingerprints;
 - exact approval binding;
@@ -51,7 +57,7 @@ Own:
 
 ## Final Demo delivery contract
 
-Before Stage 9 assembly and Stage 10 delivery, read `references/demo-output.md`.
+Before legacy Stage 9 assembly and Stage 10 delivery, read `references/demo-output.md`.
 
 The default user-facing Demo deliverable is **one single standalone HTML file**:
 
@@ -71,4 +77,6 @@ Delegate exact-file evidence work to sibling `listing-evidence-auditor`. When in
 
 ## Output
 
-Produce Delivery State, verified/fallback demo assembly result, delivery-parity result, Final QA, and the final single standalone HTML Demo when a Demo is in scope.
+Legacy output remains Delivery State, verified/fallback demo assembly result, delivery-parity result, Final QA, and the final single standalone HTML Demo when a Demo is in scope.
+
+For current workflow projects, use `evidence-hardening` to recompute Final eligibility from Production Freeze + auditor evidence + Simulator bindings + exact final runtime evidence.

@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
-"""M5 release packaging contract tests.
-
-The tests intentionally exercise the built archives after extraction. They define
-what the new distribution must guarantee before implementation exists.
-"""
+"""M5.1 deterministic release packaging contract tests."""
 
 from __future__ import annotations
 
@@ -19,8 +15,7 @@ from zipfile import ZipFile
 ROOT = Path(__file__).resolve().parents[1]
 PACKAGE_MODULE = ROOT / "scripts" / "package_release.py"
 VALIDATE_MODULE = ROOT / "scripts" / "validate_release.py"
-SOURCE_COMMIT = "1" * 40
-EXPECTED_VERSION = "0.1.0"
+EXPECTED_VERSION = "0.1.1"
 CURRENT_RUNTIME_SKILLS = {
     "amazon-japan-creative-workflow",
     "listing-strategy",
@@ -46,11 +41,13 @@ def sha256(path: Path) -> str:
 
 
 def build(tmp: Path) -> tuple[object, dict, Path]:
-    package = load(PACKAGE_MODULE, "m5_package_release")
-    manifest = package.build_release(tmp, SOURCE_COMMIT)
+    package = load(PACKAGE_MODULE, "m51_package_release")
+    source_commit = package._default_source_commit()
+    manifest = package.build_release(tmp, source_commit)
     manifest_path = tmp / f"amazon-japan-creative-workflow-{EXPECTED_VERSION}-release-manifest.json"
     assert manifest_path.is_file()
     assert json.loads(manifest_path.read_text(encoding="utf-8")) == manifest
+    assert manifest["source_commit"] == source_commit
     return package, manifest, manifest_path
 
 
@@ -61,24 +58,23 @@ def test_version_sources_are_consistent() -> None:
     assert f"distribution_version: {version}" in manifest
 
 
-def test_build_creates_two_primary_archives_manifest_and_checksums() -> None:
+def test_build_creates_plugin_and_codex_archives_manifest_and_checksums() -> None:
     with tempfile.TemporaryDirectory() as name:
         out = Path(name)
         _, manifest, manifest_path = build(out)
         assert manifest["schema_version"] == "1.0"
         assert manifest["version"] == EXPECTED_VERSION
-        assert manifest["source_commit"] == SOURCE_COMMIT
         assert manifest["normal_invocation"] == "$amazon-japan-creative-workflow"
         assert manifest["runtime_skills"] == sorted(CURRENT_RUNTIME_SKILLS)
         assert manifest["support_skills"] == sorted(SUPPORT_SKILLS)
-        assert set(manifest["artifacts"]) == {"one_install_skill", "codex_bundle"}
+        assert set(manifest["artifacts"]) == {"plugin_bundle", "codex_bundle"}
         assert manifest_path.is_file()
         assert (out / "SHA256SUMS").is_file()
         for row in manifest["artifacts"].values():
             assert (out / row["filename"]).is_file()
 
 
-def test_release_build_is_deterministic_for_same_source_commit() -> None:
+def test_release_build_is_deterministic_for_same_verified_head() -> None:
     with tempfile.TemporaryDirectory() as a_name, tempfile.TemporaryDirectory() as b_name:
         a = Path(a_name)
         b = Path(b_name)
@@ -91,26 +87,32 @@ def test_release_build_is_deterministic_for_same_source_commit() -> None:
         assert (a / "SHA256SUMS").read_bytes() == (b / "SHA256SUMS").read_bytes()
 
 
-def test_one_install_archive_contains_current_runtime_only() -> None:
+def test_plugin_archive_contains_official_multi_skill_layout() -> None:
     with tempfile.TemporaryDirectory() as name:
         out = Path(name)
         _, manifest, _ = build(out)
-        archive_path = out / manifest["artifacts"]["one_install_skill"]["filename"]
+        archive_path = out / manifest["artifacts"]["plugin_bundle"]["filename"]
         with ZipFile(archive_path) as archive:
             members = set(archive.namelist())
             prefix = "amazon-japan-creative-workflow/"
-            assert prefix + "SKILL.md" in members
-            assert prefix + "core/manifest.yaml" in members
+            plugin_manifest = prefix + ".codex-plugin/plugin.json"
+            assert plugin_manifest in members
+            plugin = json.loads(archive.read(plugin_manifest).decode("utf-8"))
+            assert plugin["name"] == "amazon-japan-creative-workflow"
+            assert plugin["version"] == EXPECTED_VERSION
+            assert plugin["skills"] == "./skills/"
             assert prefix + "BUILD_INFO.json" in members
             assert prefix + "runtime-scripts/package_common.py" in members
-            for skill in (CURRENT_RUNTIME_SKILLS - {"amazon-japan-creative-workflow"}) | SUPPORT_SKILLS:
-                assert prefix + f"internal-skills/{skill}/SKILL.md" in members
+            for skill in CURRENT_RUNTIME_SKILLS | SUPPORT_SKILLS:
+                assert prefix + f"skills/{skill}/SKILL.md" in members
             for legacy in LEGACY_ONLY_SKILLS:
-                assert not any(f"internal-skills/{legacy}/" in member for member in members)
+                assert not any(f"skills/{legacy}/" in member for member in members)
+            assert not any("/internal-skills/" in member for member in members)
+            assert not any(member.endswith("/scripts/validate_project_state.py") for member in members)
             assert not any("selftest_" in member or "__pycache__" in member or member.endswith(".pyc") for member in members)
 
 
-def test_codex_bundle_preserves_project_skill_layout_without_legacy_default() -> None:
+def test_codex_bundle_preserves_project_skill_layout_without_legacy_default_or_shim() -> None:
     with tempfile.TemporaryDirectory() as name:
         out = Path(name)
         _, manifest, _ = build(out)
@@ -126,6 +128,7 @@ def test_codex_bundle_preserves_project_skill_layout_without_legacy_default() ->
                 assert f".agents/skills/{skill}/SKILL.md" in members
             for legacy in LEGACY_ONLY_SKILLS:
                 assert not any(member.startswith(f".agents/skills/{legacy}/") for member in members)
+            assert ".agents/skills/amazon-japan-creative-workflow/scripts/validate_project_state.py" not in members
             assert not any("selftest_" in member or "__pycache__" in member or member.endswith(".pyc") for member in members)
 
 
@@ -144,22 +147,22 @@ def test_manifest_hashes_and_sha256sums_match_physical_artifacts() -> None:
         assert actual == sorted(expected_lines)
 
 
-def test_one_install_embedded_simulator_bridge_can_import_package_common() -> None:
+def test_plugin_simulator_bridge_can_import_packaged_shared_dependencies() -> None:
     with tempfile.TemporaryDirectory() as name:
         out = Path(name)
         _, manifest, _ = build(out)
-        archive_path = out / manifest["artifacts"]["one_install_skill"]["filename"]
+        archive_path = out / manifest["artifacts"]["plugin_bundle"]["filename"]
         extract_root = out / "extract"
         with ZipFile(archive_path) as archive:
             archive.extractall(extract_root)
-        script = extract_root / "amazon-japan-creative-workflow" / "internal-skills" / "listing-simulator-bridge" / "scripts" / "build_import_pack.py"
+        script = extract_root / "amazon-japan-creative-workflow" / "skills" / "listing-simulator-bridge" / "scripts" / "build_import_pack.py"
         result = subprocess.run([sys.executable, str(script), "--help"], capture_output=True, text=True)
         assert result.returncode == 0, result.stderr
         assert "source_root" in result.stdout
 
 
 def test_release_validator_accepts_clean_build_and_rejects_tampering() -> None:
-    validator = load(VALIDATE_MODULE, "m5_validate_release")
+    validator = load(VALIDATE_MODULE, "m51_validate_release")
     with tempfile.TemporaryDirectory() as name:
         out = Path(name)
         _, manifest, _ = build(out)
@@ -187,7 +190,7 @@ def main() -> int:
     tests = [(name, value) for name, value in globals().items() if name.startswith("test_") and callable(value)]
     for name, test in sorted(tests):
         test()
-    print(f"PASS: {len(tests)} M5 release packaging tests")
+    print(f"PASS: {len(tests)} M5.1 release packaging tests")
     return 0
 
 

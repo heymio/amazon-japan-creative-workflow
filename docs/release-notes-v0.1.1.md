@@ -32,7 +32,9 @@ Status: release candidate only. Do not publish until the real-agent and reposito
 ### Repository governance
 
 - Adds read-only governance observation tooling.
-- Does not claim `main` is protected until GitHub live state reports protection/ruleset coverage.
+- Governance verification is fail-closed on the actual ruleset contents, not merely the existence of a matching ruleset or `protected: true`.
+- A qualifying ruleset must be Active, target `main`, require pull requests, require the `validate` check from GitHub Actions app `15368`, block force pushes, and block deletion.
+- Does not claim `main` is protected until GitHub live state reports that full rule set.
 
 ## v0.1.0 deprecation
 

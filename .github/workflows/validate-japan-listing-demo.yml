@@ -1,4 +1,4 @@
-name: Validate Amazon Japan Creative Workflow M4
+name: Validate Amazon Japan Creative Workflow M5
 
 on:
   push:
@@ -36,6 +36,7 @@ jobs:
       - run: python3 .agents/skills/listing-evidence-auditor/scripts/selftest_auditor.py
       - run: python3 .agents/skills/listing-hardening/scripts/selftest_hardening.py
       - run: python3 .agents/skills/evidence-hardening/scripts/selftest_final_eligibility.py
+      - run: python3 scripts/selftest_release_packaging.py
       - name: Parse machine-readable contracts and fixtures
         run: |
           python3 - <<'PY'
@@ -54,7 +55,7 @@ jobs:
               "fixtures/adversarial/manifest.json",
           ]:
               json.loads(Path(path).read_text(encoding="utf-8"))
-          print("PASS: M4 JSON contracts parse")
+          print("PASS: M5 JSON contracts parse")
           PY
       - name: Verify deterministic Simulator ZIP and validation
         shell: bash

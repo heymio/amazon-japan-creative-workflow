@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/amazon-japan-creative-workflow/simulator-manifest.schema.json",
+  "title": "Amazon Japan Listing Simulator Manifest",
+  "type": "object",
+  "required": ["schema_version", "project", "bindings", "active_selection", "eligibility"],
+  "properties": {
+    "schema_version": {"const": "1.0"},
+    "project": {
+      "type": "object",
+      "required": ["market", "channel", "locale"],
+      "properties": {
+        "market": {"const": "JP"},
+        "channel": {"const": "amazon-jp"},
+        "locale": {"type": "string", "minLength": 1},
+        "product_id": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": true
+    },
+    "contents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["content_id", "content_type"],
+        "properties": {
+          "content_id": {"type": "string", "minLength": 1},
+          "content_type": {
+            "enum": ["basic-a-plus", "premium-a-plus", "brand-story", "shoppable-collections"]
+          }
+        },
+        "additionalProperties": true
+      }
+    },
+    "active_selection": {
+      "type": "object",
+      "properties": {
+        "enhanced_description_id": {"type": ["string", "null"]},
+        "brand_content_id": {"type": ["string", "null"]}
+      },
+      "additionalProperties": false
+    },
+    "bindings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "asset-binding.schema.json"}
+    },
+    "listing_family": {"type": ["object", "null"]},
+    "pending_assets": {"type": "array"},
+    "eligibility": {
+      "type": "object",
+      "required": [
+        "production_freeze_ready",
+        "required_asset_set_complete",
+        "approved_output_matches",
+        "asset_binding_complete",
+        "blocking_conflicts",
+        "hard_verification_status"
+      ],
+      "properties": {
+        "production_freeze_ready": {"type": "boolean"},
+        "required_asset_set_complete": {"type": "boolean"},
+        "approved_output_matches": {"type": "boolean"},
+        "asset_binding_complete": {"type": "boolean"},
+        "blocking_conflicts": {"type": "array", "items": {"type": "string", "minLength": 1}},
+        "hard_verification_status": {"enum": ["PASS", "UNVERIFIED", "FAIL"]}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": true
+}

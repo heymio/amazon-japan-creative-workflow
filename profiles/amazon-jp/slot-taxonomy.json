@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "gallery": [
+    "gallery-1",
+    "gallery-2",
+    "gallery-3",
+    "gallery-4",
+    "gallery-5",
+    "gallery-6",
+    "gallery-video-1",
+    "gallery-video-poster-1"
+  ],
+  "detail": [
+    "detail-gallery-1",
+    "detail-gallery-2",
+    "detail-video-1",
+    "product-document-1"
+  ],
+  "content_slot_pattern": "content:{content_id}:module:{module_id}:slot:{slot_key}"
+}

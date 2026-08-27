@@ -1,0 +1,31 @@
+{
+  "schema_version": "synthetic-1",
+  "synthetic": true,
+  "note": "Synthetic contract-test registry only. These template IDs are not the real Amazon Japan Listing Simulator registry.",
+  "templates": [
+    {
+      "template_id": "synthetic-basic-image-text",
+      "content_type": "basic-a-plus",
+      "slot_keys": ["image", "headline", "body"],
+      "supported_media_types": ["image"]
+    },
+    {
+      "template_id": "synthetic-premium-hero",
+      "content_type": "premium-a-plus",
+      "slot_keys": ["image", "headline", "body", "video"],
+      "supported_media_types": ["image", "video"]
+    },
+    {
+      "template_id": "synthetic-brand-story-card",
+      "content_type": "brand-story",
+      "slot_keys": ["image", "headline", "body"],
+      "supported_media_types": ["image"]
+    },
+    {
+      "template_id": "synthetic-shoppable-collection",
+      "content_type": "shoppable-collections",
+      "slot_keys": ["hero", "product-card-1", "product-card-2"],
+      "supported_media_types": ["image"]
+    }
+  ]
+}

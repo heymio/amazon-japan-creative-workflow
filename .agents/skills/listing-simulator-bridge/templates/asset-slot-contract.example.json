@@ -1,0 +1,21 @@
+{
+  "schema_version": "1.0",
+  "bindings": [
+    {
+      "asset_id": "G1",
+      "slot_id": "gallery-1",
+      "output_ref": "outputs/gallery/g1.png",
+      "variation_id": null
+    },
+    {
+      "asset_id": "A1",
+      "slot_id": "content:premium-a:module:hero-01:slot:image",
+      "output_ref": "outputs/a-plus/premium-a/hero.png",
+      "variation_id": null,
+      "content_id": "premium-a",
+      "module_id": "hero-01",
+      "template_id": "registry-owned-id",
+      "slot_key": "image"
+    }
+  ]
+}

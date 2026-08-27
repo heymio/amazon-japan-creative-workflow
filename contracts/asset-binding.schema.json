@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/amazon-japan-creative-workflow/asset-binding.schema.json",
+  "title": "Amazon Japan Simulator Asset Binding",
+  "type": "object",
+  "required": ["asset_id", "slot_id", "output_ref"],
+  "properties": {
+    "asset_id": {"type": "string", "minLength": 1},
+    "slot_id": {"type": "string", "minLength": 1},
+    "output_ref": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:[\\\\/])(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*\\\\).+$"
+    },
+    "variation_id": {"type": ["string", "null"], "minLength": 1},
+    "content_id": {"type": ["string", "null"], "minLength": 1},
+    "module_id": {"type": ["string", "null"], "minLength": 1},
+    "template_id": {"type": ["string", "null"], "minLength": 1},
+    "slot_key": {"type": ["string", "null"], "minLength": 1}
+  },
+  "additionalProperties": false
+}

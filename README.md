@@ -24,7 +24,7 @@ Stage 9.5     creative-production targeted rework
 Stage 10      evidence-hardening + final acceptance
 ```
 
-M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strategy`; M2 added `creative-production` and `creative-quality`; M3 adds `listing-simulator-bridge` with explicit bindings, Parent/Variation inheritance, Pending-without-guessing behavior, deterministic folder/ZIP import packs, and pack security. Final evidence extraction remains a later milestone.
+M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strategy`; M2 added `creative-production` and `creative-quality`; M3 added `listing-simulator-bridge`; M4 adds `evidence-hardening` as the fail-closed Stage 10 Final eligibility layer. Packaging/release redesign remains a later milestone.
 
 ## Core operating principles
 
@@ -35,16 +35,32 @@ M0 established the independent Router; M1 migrated Stage 0–7 to `listing-strat
 - Asset PASS does not imply Set PASS.
 - Diagnose before rework; preserve unaffected approved assets.
 - The external Amazon Japan Listing Simulator is the only Amazon page renderer.
-- Evidence hardening remains fail-closed for final eligibility, but it is not the creative UX center.
+- Evidence hardening remains fail-closed for Final eligibility, but it is not the creative UX center.
+- Caller-authored `PASS` flags never substitute for recomputed exact-output evidence.
 - No automatic merge or release.
 
 ## Simulator interoperability
 
 M3 exports explicit `asset-slot-contract.json` and derived `listing-simulator-manifest.json` contracts for the external Amazon Japan Listing Simulator. Stable Gallery/detail slots are workflow-owned; A+/Brand Story/Shoppable template IDs are registry-owned. Unbound media becomes Pending rather than being guessed from filenames.
 
-Folder and ZIP packs are deterministic and reject path traversal, absolute/local paths, symlinks, `.env` files, executable JavaScript, duplicate normalized ZIP members, oversized entries, and suspicious compression ratios. The included template registry is **synthetic contract-test data only**; real 43-template registry compatibility is a later real-simulator gate.
+Folder and ZIP packs are deterministic and reject path traversal, absolute/local paths, symlinks, `.env` files, executable JavaScript, duplicate normalized ZIP members, oversized entries, and suspicious compression ratios. The included template registry is **synthetic contract-test data only**; real 43-template registry compatibility remains a real-simulator integration gate.
 
 See [`docs/simulator-integration.md`](docs/simulator-integration.md).
+
+## Final evidence hardening
+
+M4 reconciles four independently owned evidence domains before Final delivery:
+
+- Production Freeze exact required-set and approved-output state;
+- `listing-evidence-auditor` exact physical/semantic evidence;
+- Simulator binding/import parity;
+- exact standalone HTML SHA-256 plus offline browser-runtime evidence at 375 / 390 / 430 px.
+
+The result is `PASS`, `UNVERIFIED`, or `FAIL`. Only `PASS` can set `final_eligible=true`. Review mode remains separate and may continue when unresolved evidence or Pending assets still block Final.
+
+Legacy `listing-hardening` remains for v0.3.3 Delivery State compatibility and regression coverage; current Stage 10 routing uses `evidence-hardening`.
+
+See [`docs/evidence-hardening.md`](docs/evidence-hardening.md).
 
 ## Baseline and provenance
 

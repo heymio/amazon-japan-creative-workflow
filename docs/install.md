@@ -80,13 +80,14 @@ python3 scripts/validate_release.py dist
 
 The build fails if the expected SHA differs from HEAD or tracked files are dirty.
 
-## Release readiness beyond deterministic tests
+## Pilot release readiness
 
-A green deterministic build is necessary but not sufficient for formal v0.1.1 publication. Also required:
+A green deterministic build is necessary but not sufficient for v0.1.1 publication. The hard publication gates are:
 
-- a real-agent result covering all ten pressure-eval cases;
-- live GitHub `main` protection/ruleset review;
+- live GitHub `main` protection/ruleset review must PASS;
 - explicit user publication approval.
+
+The ten-case real-agent pressure eval remains a recommended post-release/pilot validation before describing the workflow as production-ready. It is not a v0.1.1 publication blocker, and missing real-agent evidence must remain visible as `UNVERIFIED` rather than being represented as PASS.
 
 See `docs/agent-pressure-evals.md`, `docs/main-protection-required.md`, and `docs/release.md`.
 

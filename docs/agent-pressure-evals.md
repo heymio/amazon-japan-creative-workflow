@@ -4,7 +4,7 @@ M5.1 separates deterministic case-definition validation from real-agent executio
 
 ## Why
 
-The repository's historical Router and Golden Path tests prove contracts and documentation, not actual model behavior. A release must not treat textual fixtures as proof that a real agent routes correctly under pressure.
+The repository's historical Router and Golden Path tests prove contracts and documentation, not actual model behavior. Textual fixtures must not be treated as proof that a real agent routes correctly under pressure.
 
 ## Cases
 
@@ -38,8 +38,14 @@ A real run must write a separate JSON result artifact and must not modify the so
 }
 ```
 
-A formal v0.1.1 publication gate requires all 10 case IDs exactly once and every status `PASS`. Missing results are `UNVERIFIED`, never implicitly passing.
+A valid real-agent result requires all 10 case IDs exactly once and every status `PASS`. Missing results are `UNVERIFIED`, never implicitly passing.
+
+## v0.1.1 publication policy
+
+For v0.1.1, real-agent execution evidence is **recommended production-readiness evidence, not a pilot-publication hard gate**. This avoids requiring a long-lived model API credential solely to publish a pilot-ready artifact.
+
+The pressure cases and validator remain in the repository so the team can run them later in an authenticated Codex/ChatGPT environment. Until an actual runner produces a passing result bound to the evaluated commit, the workflow must not be described as having passed real-agent E2E validation or as fully production-ready on that basis.
 
 ## Current M5.1 boundary
 
-The deterministic CI added by M5.1 validates the eval definitions and preserves the contract for a real Codex/ChatGPT run. Until an actual runner produces a passing result bound to the intended release commit, v0.1.1 remains a release candidate rather than a production-ready publication.
+Deterministic CI validates the eval definitions and preserves the fail-closed result contract. v0.1.1 may be published as **pilot-ready** once its deterministic artifact checks and repository-governance publication gate pass and the user explicitly approves publication. Real-agent pressure testing remains a recommended pilot follow-up before promoting the workflow to production-ready status.

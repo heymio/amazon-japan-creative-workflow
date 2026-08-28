@@ -1,6 +1,6 @@
 # Release Candidate Process
 
-M5.1 defines the deterministic release-candidate build and its non-deterministic publication gates. It does not automatically merge or publish v0.1.1.
+M5.1 defines the deterministic release-candidate build and its publication gates. It does not automatically merge or publish v0.1.1.
 
 ## Version authority
 
@@ -66,26 +66,31 @@ The independent validator validates the physical release directory and its inter
 
 For the same clean repository tree, version, and verified HEAD, both ZIP archives, the release manifest, and `SHA256SUMS` must be byte-for-byte reproducible.
 
-## Agent-eval publication gate
+## Agent-eval production-readiness evidence
 
-Deterministic tests do not prove model behavior. Formal v0.1.1 publication requires a real-agent run result covering all ten cases in `evals/agent-pressure/manifest.json`, bound to the intended release commit, with every case `PASS`.
+Deterministic tests do not prove model behavior. The repository preserves ten pressure cases in `evals/agent-pressure/manifest.json` and a fail-closed real-agent result contract.
+
+A passing real-agent run is **recommended before describing the workflow as production-ready**, but it is not a v0.1.1 pilot-publication blocker. If no real-agent run exists, that evidence remains `UNVERIFIED`; it must never be represented as PASS.
 
 See `docs/agent-pressure-evals.md`.
 
 ## Repository-governance publication gate
 
-Formal v0.1.1 publication also requires an explicit live check of `main` protection/ruleset state. A green CI run by itself is not branch protection.
+v0.1.1 pilot publication requires an explicit live check of `main` protection/ruleset state. A green CI run by itself is not branch protection.
 
 See `docs/main-protection-required.md`.
 
 ## Publication boundary
 
+v0.1.1 is a **pilot-ready** release, not a claim of completed production-readiness validation.
+
 The repository may build release candidates in CI. Formal publication must use an exact merged `main` commit and requires explicit user confirmation after:
 
 1. deterministic full CI passes;
 2. Plugin/Codex release artifacts pass independent validation;
-3. real-agent pressure evals pass;
-4. live governance state is reviewed and meets policy.
+3. live governance state is reviewed and meets policy.
+
+Real-agent pressure evals remain a recommended post-release/pilot validation and should be completed before upgrading the workflow's status to production-ready.
 
 No Draft/Open PR head may be published as v0.1.1.
 

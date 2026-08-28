@@ -1,6 +1,6 @@
 # v0.1.1 Release Candidate Notes
 
-Status: release candidate only. Do not publish until the real-agent and repository-governance gates are satisfied and the user explicitly confirms publication.
+Status: **pilot-ready release candidate**. Do not publish until the repository-governance gate is satisfied and the user explicitly confirms publication. A real-agent pressure run is recommended before later promoting the workflow to production-ready status, but it is not a v0.1.1 publication blocker.
 
 ## M5.1 fixes
 
@@ -27,7 +27,8 @@ Status: release candidate only. Do not publish until the real-agent and reposito
 
 - Adds ten pressure cases covering transition commands, current-asset lock semantics, ambiguous pause wording, evidence gaps, strategy rollback, targeted rework, Simulator Pending, fail-closed hardening, long-context routing, and a cross-Skill Golden Path.
 - Deterministic CI validates the case definitions only.
-- A real-agent PASS result bound to the intended release commit remains mandatory before publication.
+- The real-agent result contract remains fail-closed: missing evidence is `UNVERIFIED`, never implicit PASS.
+- For v0.1.1, a real-agent PASS result is recommended post-release/pilot evidence before claiming production-readiness, not a publication hard gate.
 
 ### Repository governance
 
@@ -39,6 +40,10 @@ Status: release candidate only. Do not publish until the real-agent and reposito
 ## v0.1.0 deprecation
 
 The v0.1.0 `.skill.zip` is unsupported for new multi-Skill installations. v0.1.0 remains historical; use the v0.1.1 Plugin bundle after publication, or use the Codex bundle/repository checkout for pilot work.
+
+## Release positioning
+
+v0.1.1 should be described as **pilot-ready**, not as fully production-ready. Formal publication requires deterministic full CI, independent Plugin/Codex artifact validation, a live governance PASS, and explicit user approval. Real-agent E2E evidence remains a recommended pilot follow-up.
 
 ## Unchanged business architecture
 

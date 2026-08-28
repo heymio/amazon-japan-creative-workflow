@@ -37,6 +37,9 @@ def main() -> int:
     require(manifest, "market: JP", "market")
     require(manifest, "locale: ja-JP", "locale")
     require(manifest, "channel: amazon-jp", "channel")
+    require(manifest, "release_readiness: pilot-ready", "release readiness")
+    require(manifest, "real_agent_eval_required_for_publication: false", "real-agent publication policy")
+    require(manifest, "governance_review_required_for_publication: true", "governance publication policy")
 
     stage_needles = {
         "stage-4": "0–7 → `listing-strategy`",
@@ -59,7 +62,7 @@ def main() -> int:
     require(skill, "does not advance", "ambiguous wording must not advance")
     require(agent, "Amazon Japan Creative Workflow", "agent display name")
 
-    print(f"PASS: {len(EXPECTED)} stage routes + transition semantics")
+    print(f"PASS: {len(EXPECTED)} stage routes + transition semantics + release policy")
     return 0
 
 
